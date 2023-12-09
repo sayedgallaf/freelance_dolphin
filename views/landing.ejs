@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="stylesheets/general.css">
+    <link rel="stylesheet" href="stylesheets/topHeader.css">
+    <link rel="stylesheet" href="stylesheets/landing.css">
+    <link rel="stylesheet" href="stylesheets/dialog.css">
+
+</head>
+<body>
+    <div id="content">
+        <div id="topHalf">
+            <%- include('partials/topHeader.ejs') %>
+        </div>
+        <div id="bottomHalf">
+            <div id="landingPage">
+                <div id="landingIntro">
+                    <img id="landingDesign" src="assets/landingDesign.svg">
+                    <div id="landingContent">
+                        <span id="landingTitle">Are you seeking someone to complete a one-time task without the commitment of traditional employment in Bahrain?</span>
+                        <span id="landingSubtitle">Look no further; Freelance Dolphin is your solution!</span>
+                        <button id="postJobBtn" class="themedButton">Post Job to Freelancers</button>
+                        <button id="jobListBtn" class="themedButton">Find Jobs Instead</button>
+                    </div>
+                </div>
+                <div id="FAQ">
+                    <span id="FAQTitle">Frequently Asked Questions</span>
+                </div>
+                <div id="contactUs">
+                    <div id="contactUsBtn" class="lightBorder">
+                        <span>Do you have more questions?</span>
+                        <span onclick="generateDialog('contact')">Contact Us</span>
+                    </div>
+                </div>
+                <div id="footer" class="lightBorder">
+                    <a href="" class="footerURL">Terms</a>
+                    <a href="" class="footerURL">Privacy</a>
+                    <a class="footerURL" onclick="generateDialog('contact')">Contact</a>
+                </div>
+            </div>      
+        </div>
+    </div>
+    <%- include('partials/dialog.ejs') %>
+
+
+    <script src="scripts/landing.js"></script>
+    <script src="scripts/dialog.js"></script>
+</body>
+</html>

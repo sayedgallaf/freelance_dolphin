@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="stylesheets/general.css">
+    <link rel="stylesheet" href="stylesheets/topHeader.css">
+
+    <!-- scripts -->
+    <script src="scripts/responsive.js"></script>
+</head>
+<body>
+    <div id="content">
+        <div id="topHalf">
+            <%- include('partials/topHeader.ejs') %>
+        </div>
+        <div id="bottomHalf">
+
+            <div id="leftBottomHalf">
+                <button id="leftBottomHalfDrawer" class="responsiveDrawer">&gt;</button>
+            </div>
+
+            <div id="centerBottomHalf">
+
+            </div>
+
+            <div id="rightBottomHalf">
+                <button id="rightBottomHalfDrawer" class="responsiveDrawer">&lt;</button>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

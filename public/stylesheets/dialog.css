@@ -1,0 +1,125 @@
+#dialogDiv{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    background-color: rgba(34,40,48,0.8);
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+#dynamicForm{
+    width: 420px;
+    border-radius: 10px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    padding: 80px;
+}
+.dialogLabel{
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: -25px;
+}
+.dialogInput{
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 20px;
+}
+.dialogTextArea{
+    border-radius: 10px;
+    height: 100px;
+    resize: none;
+    padding: 10px;
+    font-size: 20px;
+}
+.dialogBtn{
+    height: 60px;
+    font-size: 28px;
+    font-weight: bold;
+    border-radius: 10px;
+}
+.choicesDiv{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+.dialogChoiceBtn{
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    flex: 1;
+    align-items: center;
+    background-color: transparent;
+    cursor: pointer;
+}
+.dialogChoiceBtn.selected{
+    background-color: #222830;
+    color: white;
+}
+.dialogFunction{
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: underline;
+    margin-top: -20px;
+}
+.dialogDesc{
+    margin-top: -20px;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 900px) {
+    #dynamicForm{
+        width: 300px;
+        gap: 15px;
+        padding: 40px;
+    }
+    .dialogLabel{
+        font-size: 20px;
+        margin-bottom: -10px;
+    }
+    .dialogInput{
+        padding: 5px;
+        font-size: 18px;
+    }
+    .dialogTextArea{
+        height: 70px;
+        padding: 5px;
+        font-size: 18px;
+    }
+    .dialogBtn{
+        height: 45px;
+        font-size: 22px;
+    }
+    .choicesDiv{
+        gap: 15px;
+    }
+    .dialogChoiceBtn{
+        padding: 5px;
+        font-size: 18px;
+    }
+    .dialogChoiceBtn.selected{
+        background-color: #222830;
+        color: white;
+    }
+    .dialogFunction{
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: underline;
+        margin-top: -10px;
+    }
+    .dialogDesc{
+        margin-top: -10px;
+        font-size: 14px;
+    }
+}
