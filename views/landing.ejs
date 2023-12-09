@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Freelance Dolphin</title>
     <!-- stylesheets -->
     <link rel="stylesheet" href="stylesheets/general.css">
     <link rel="stylesheet" href="stylesheets/topHeader.css">
@@ -46,8 +46,12 @@
     </div>
     <%- include('partials/dialog.ejs') %>
 
-
+    <!-- scripts -->
+    <script>
+        window.pageData = <%- JSON.stringify(data) %>;
+    </script>
     <script src="scripts/landing.js"></script>
     <script src="scripts/dialog.js"></script>
+    <script src="scripts/loggedIn.js"></script>
 </body>
 </html>

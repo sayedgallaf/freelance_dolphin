@@ -7,9 +7,7 @@
     <!-- stylesheets -->
     <link rel="stylesheet" href="stylesheets/general.css">
     <link rel="stylesheet" href="stylesheets/topHeader.css">
-
-    <!-- scripts -->
-    <script src="scripts/responsive.js"></script>
+    <link rel="stylesheet" href="stylesheets/dialog.css">
 </head>
 <body>
     <div id="content">
@@ -32,5 +30,15 @@
             
         </div>
     </div>
+    <%- include('partials/dialog.ejs') %>
+
+    <script>
+        window.pageData = <%- JSON.stringify(data) %>;
+    </script>
+
+    <!-- scripts -->
+    <script src="scripts/dialog.js"></script>
+    <script src="scripts/responsive.js"></script>
+    <script src="scripts/loggedIn.js"></script>
 </body>
 </html>

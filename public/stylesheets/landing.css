@@ -34,9 +34,10 @@
     color: #222830;
 }
 #landingDesign{
+    width: min(60vw,1200px);
     position: absolute;
     bottom: 0;
-    right: 100px;
+    right: min(5vw,100px);
 }
 #postJobBtn{
     font-size: 30px;

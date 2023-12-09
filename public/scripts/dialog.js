@@ -1,63 +1,65 @@
 let allDialogs = {
     all: [
         { content: 'Account Type', type: 'label' },
-        { type: 'multipleChoice', name: 'accType', choices:[{label:"Employer", value:"employer"}, {label:"Freelancer", value:"freelancer"}] },
+        { type: 'multipleChoice', name: 'accType', choices: [{ label: "Employer", value: "employer" }, { label: "Freelancer", value: "freelancer" }] },
         { content: 'Email', type: 'label' },
         { type: 'input', inputType: 'text', name: 'email' },
         { content: 'Password', type: 'label' },
         { type: 'input', inputType: 'password', name: 'password' },
-        { type: 'function', content: 'Forgot Password', onclick:()=> {generateDialog("login")} },
+        { type: 'function', content: 'Forgot Password', onclick: () => { generateDialog("login") } },
         { content: 'Bio', type: 'label' },
         { type: 'textarea', name: 'bio' },
-        { type: 'button', content: 'Login', endpointURL: '/' },
+        { type: 'button', content: 'Login', endpointURL: '/login' },
         { type: 'desc', content: 'ⓘ Please check your email for a 3-digit code and enter it here to proceed. If you didn’t receive the code, click here. ', endpointURL: '/' },
     ],
     signup: [
         { content: 'Account Type', type: 'label' },
-        { type: 'multipleChoice', name: 'accType', choices:[{label:"Employer", value:"employer"}, {label:"Freelancer", value:"freelancer"}] },
+        { type: 'multipleChoice', name: 'UserType', choices: [{ label: "Employer", value: "employer" }, { label: "Freelancer", value: "freelancer" }] },
+        { content: 'Full Name', type: 'label' },
+        { type: 'input', inputType: 'text', name: 'FullName' },
         { content: 'Email', type: 'label' },
-        { type: 'input', inputType: 'text', name: 'email' },
+        { type: 'input', inputType: 'text', name: 'Email' },
         { content: 'Password', type: 'label' },
-        { type: 'input', inputType: 'password', name: 'password' },
+        { type: 'input', inputType: 'password', name: 'Password' },
         { content: 'Repeat Password', type: 'label' },
-        { type: 'input', inputType: 'password', name: 'password2' },
-        { type: 'button', content: 'Sign Up', endpointURL: '/' },
+        { type: 'input', inputType: 'password', name: 'Password2' },
+        { type: 'button', content: 'Sign Up', endpointURL: '/signup' },
         { type: 'desc', content: 'ⓘ By creating this account you agree to our terms and services.', endpointURL: '/' },
     ],
-    login:[
+    login: [
         { content: 'Email', type: 'label' },
-        { type: 'input', inputType: 'text', name: 'email' },
+        { type: 'input', inputType: 'text', name: 'Email' },
         { content: 'Password', type: 'label' },
-        { type: 'input', inputType: 'password', name: 'password' },
-        { type: 'function', content: 'Forgot Password', onclick:()=> {generateDialog("forgetPassword")} },
-        { type: 'button', content: 'Login', endpointURL: '/' },
-        { type: 'function', content: 'Sign Up Instead', onclick:()=> {generateDialog("signup")} }
+        { type: 'input', inputType: 'password', name: 'Password' },
+        { type: 'function', content: 'Forgot Password', onclick: () => { generateDialog("forgetPassword") } },
+        { type: 'button', content: 'Login', endpointURL: '/login' },
+        { type: 'function', content: 'Sign Up Instead', onclick: () => { generateDialog("signup") } }
     ],
-    forgetPassword:[
+    forgetPassword: [
         { content: 'Email', type: 'label' },
         { type: 'input', inputType: 'text', name: 'email' },
-        { type: 'button', content: 'Send Link', endpointURL: '/' },
+        { type: 'button', content: 'Send Link', endpointURL: '/forgotPassword' },
         { type: 'desc', content: 'ⓘ Please check your email for password reset link.', endpointURL: '/' },
     ],
-    contact:[
+    contact: [
         { content: 'Email', type: 'label' },
         { type: 'input', inputType: 'text', name: 'email' },
         { content: 'Message', type: 'label' },
         { type: 'textarea', name: 'message' },
-        { type: 'button', content: 'Submit', endpointURL: '/' }
+        { type: 'button', content: 'Submit', endpointURL: '/contact' }
     ]
 }
 const dialogDiv = document.getElementById('dialogDiv');
 
 dialogDiv.onclick = (e) => {
-    if(e.target !== e.currentTarget) return;
+    if (e.target !== e.currentTarget) return;
     dialogDiv.style.display = "none"
 }
 
 function generateDialog(dialogName) {
     let dialog = allDialogs[dialogName]
     const form = document.getElementById('dynamicForm');
-    while(form.lastElementChild){
+    while (form.lastElementChild) {
         form.lastElementChild.remove()
     }
     const formData = {}; // Object to store form data
@@ -83,7 +85,7 @@ function generateDialog(dialogName) {
                 newElement.textContent = element.content;
                 newElement.onclick = element.onclick;
                 newElement.classList.add("dialogFunction")
-            break;
+                break;
 
             case 'input':
                 newElement = document.createElement('input');
@@ -157,7 +159,6 @@ function generateDialog(dialogName) {
 
 // Function to send form data to an endpoint
 function sendDataToEndpoint(data, endpointURL) {
-    console.log(data)
     fetch(endpointURL, {
         method: 'POST',
         headers: {
@@ -165,12 +166,13 @@ function sendDataToEndpoint(data, endpointURL) {
         },
         body: JSON.stringify(data) // Sending data as JSON
     })
-        .then(response => {
-            // Handle response
-            console.log('Data sent:', response);
-        })
-        .catch(error => {
-            // Handle error
-            console.error('Error sending data:', error);
-        });
+    .then(response => {
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
 }

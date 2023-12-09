@@ -5,7 +5,12 @@
     align-items: center;
 }
 #topHeaderLogin{
-    width: 150px;
+    min-width: 150px;
+    max-width: 250px;
+    padding: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     height: 50px;
     font-size: 22px;
     font-weight: bold;
@@ -15,7 +20,9 @@
         width: 120px;
     }
     #topHeaderLogin{
-        width: 120px;
+        min-width: 120px;
+        max-width: 170px;
+        padding: 0 10px;
         height: 40px;
         font-size: 18px;
     }
