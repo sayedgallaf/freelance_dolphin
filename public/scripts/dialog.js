@@ -10,7 +10,7 @@ let allDialogs = {
         { content: 'Bio', type: 'label' },
         { type: 'textarea', name: 'bio' },
         { type: 'button', content: 'Login', endpointURL: '/login' },
-        { type: 'desc', content: 'ⓘ Please check your email for a 3-digit code and enter it here to proceed. If you didn’t receive the code, click here. ', endpointURL: '/' },
+        { type: 'desc', content: 'ⓘ Please check your email for a 3-digit code and enter it here to proceed. If you didn’t receive the code, click here. ' },
     ],
     signup: [
         { content: 'Account Type', type: 'label' },
@@ -24,29 +24,41 @@ let allDialogs = {
         { content: 'Repeat Password', type: 'label' },
         { type: 'input', inputType: 'password', name: 'Password2' },
         { type: 'button', content: 'Sign Up', endpointURL: '/signup' },
-        { type: 'desc', content: 'ⓘ By creating this account you agree to our terms and services.', endpointURL: '/' },
+        { type: 'desc', content: 'ⓘ By creating this account you agree to our terms and services.' },
     ],
     login: [
         { content: 'Email', type: 'label' },
         { type: 'input', inputType: 'text', name: 'Email' },
         { content: 'Password', type: 'label' },
         { type: 'input', inputType: 'password', name: 'Password' },
-        { type: 'function', content: 'Forgot Password', onclick: () => { generateDialog("forgetPassword") } },
-        { type: 'button', content: 'Login', endpointURL: '/login' },
+        { type: 'function', content: 'Forgot Password', onclick: () => { generateDialog("forgotPassword") } },
+        { type: 'button', content: 'Login', endpointURL: '/login', endpointSuccess: () => {location.reload()} },
         { type: 'function', content: 'Sign Up Instead', onclick: () => { generateDialog("signup") } }
     ],
-    forgetPassword: [
+    forgotPassword: [
         { content: 'Email', type: 'label' },
-        { type: 'input', inputType: 'text', name: 'email' },
-        { type: 'button', content: 'Send Link', endpointURL: '/forgotPassword' },
-        { type: 'desc', content: 'ⓘ Please check your email for password reset link.', endpointURL: '/' },
+        { type: 'input', inputType: 'text', name: 'Email' },
+        { type: 'button', content: 'Send Email', endpointURL: '/forgotPassword', endpointSuccess: () => {generateDialog("confirmForgotPassword")} }
+    ],
+    confirmForgotPassword: [
+        { content: '6-Digit Code', type: 'label' },
+        { type: 'input', inputType: 'number', name: 'ForgotPasswordCode' },
+        { type: 'button', content: 'Confirm', endpointURL: '/confirmForgotPassword', endpointSuccess: () => {generateDialog("changePassword")} },
+        { type: 'desc', content: 'ⓘ Please check your email for the 6-Digit Code.' }
+    ],
+    changePassword: [
+        { content: 'New Password', type: 'label' },
+        { type: 'input', inputType: 'password', name: 'Password' },
+        { content: 'Repeat Password', type: 'label' },
+        { type: 'input', inputType: 'password', name: 'Password2' },
+        { type: 'button', content: 'Change Password', endpointURL: '/changePassword', endpointSuccess: () => {location.reload()} },
     ],
     contact: [
         { content: 'Email', type: 'label' },
-        { type: 'input', inputType: 'text', name: 'email' },
+        { type: 'input', inputType: 'text', name: 'Email' },
         { content: 'Message', type: 'label' },
-        { type: 'textarea', name: 'message' },
-        { type: 'button', content: 'Submit', endpointURL: '/contact' }
+        { type: 'textarea', name: 'Message' },
+        { type: 'button', content: 'Submit', endpointURL: '/contact', endpointSuccess:() => {dialogDiv.style.display = "none"} }
     ]
 }
 const dialogDiv = document.getElementById('dialogDiv');
@@ -116,7 +128,7 @@ function generateDialog(dialogName) {
                 newElement.classList.add('dialogBtn');
                 newElement.classList.add('themedButton');
                 newElement.addEventListener('click', function () {
-                    sendDataToEndpoint(formData, element.endpointURL);
+                    sendDataToEndpoint(formData, element.endpointURL, element.endpointSuccess);
                 });
                 break;
 
@@ -158,7 +170,7 @@ function generateDialog(dialogName) {
 }
 
 // Function to send form data to an endpoint
-function sendDataToEndpoint(data, endpointURL) {
+function sendDataToEndpoint(data, endpointURL, endpointSuccess) {
     fetch(endpointURL, {
         method: 'POST',
         headers: {
@@ -167,9 +179,17 @@ function sendDataToEndpoint(data, endpointURL) {
         body: JSON.stringify(data) // Sending data as JSON
     })
     .then(response => {
-        return response.json();
+        if (response.ok) {
+            return response.json(); // Return data for successful requests
+        } else {
+            return response.json().then(errorData => {
+                alert(errorData.message);
+                throw new Error(errorData.message); // Throw an error with the server error message
+            });
+        }
     })
     .then(data => {
+        endpointSuccess()
         alert(data.message);
     })
     .catch(error => {

@@ -1,0 +1,10 @@
+#bottomHalf{
+    overflow: auto;
+    overflow-x: hidden;
+}
+#legalInfo{
+    width: 90%;
+    font-size: 24px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

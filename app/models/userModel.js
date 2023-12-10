@@ -43,13 +43,58 @@ const User = {
     },
     async getUserByEmail(email) {
         try {
-          const [rows] = await db.query('SELECT * FROM User WHERE Email = ?', [email]);
-          return rows.length > 0 ? rows[0] : null; // Return the user object or null if not found
+            const [rows] = await db.query('SELECT * FROM User WHERE Email = ?', [email]);
+            return rows.length > 0 ? rows[0] : null; // Return the user object or null if not found
         } catch (error) {
-          throw new Error(`Error fetching user by email: ${error.message}`);
+            throw new Error(`Error fetching user by email: ${error.message}`);
         }
     },
-    
+    async updateUser(id, updatedUserData) {
+        const { UserType, FullName, Email, Password, Bio } = updatedUserData;
+        try {
+            let updateFields = '';
+            const updateValues = [];
+
+            if (UserType) {
+                updateFields += 'UserType = ?, ';
+                updateValues.push(UserType);
+            }
+            if (FullName) {
+                updateFields += 'FullName = ?, ';
+                updateValues.push(FullName);
+            }
+            if (Email) {
+                updateFields += 'Email = ?, ';
+                updateValues.push(Email);
+            }
+            if (Password) {
+                const hashedPassword = await bcrypt.hash(Password, 10); // Hash the new password
+                updateFields += 'Password = ?, ';
+                updateValues.push(hashedPassword);
+            }
+            if (Bio) {
+                updateFields += 'Bio = ?, ';
+                updateValues.push(Bio);
+            }
+
+            // Remove trailing comma and space from updateFields
+            updateFields = updateFields.replace(/,\s*$/, '');
+
+            if (updateFields) {
+                updateValues.push(id); // Push the user ID to the end for WHERE clause
+
+                const sql = `UPDATE User SET ${updateFields} WHERE UserID = ?`;
+                const [result] = await db.query(sql, updateValues);
+
+                return result.affectedRows > 0; // Return true if the user was updated successfully
+            } else {
+                throw new Error('No fields to update');
+            }
+        } catch (error) {
+            throw new Error(`Error updating user: ${error.message}`);
+        }
+    }
+
     // Other methods for updating, deleting users, etc.
 };
 

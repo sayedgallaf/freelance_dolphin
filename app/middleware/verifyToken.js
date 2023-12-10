@@ -11,12 +11,13 @@ function verifyToken(req, res, next) {
       if (err) {
         res.sendStatus(403); // Forbidden
       } else {
-        req.authData = await User.getUserById(authData.UserID);
+        req.session.authData = await User.getUserById(authData.UserID);
+        delete req.session.authData.Password;
         next();
       }
     });
   } else {
-    req.authData = null;
+    req.session.authData = null;
     next();
   }
 }

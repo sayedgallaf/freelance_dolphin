@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="stylesheets/general.css">
+    <link rel="stylesheet" href="stylesheets/topHeader.css">
+    <link rel="stylesheet" href="stylesheets/dialog.css">
+    <link rel="stylesheet" href="stylesheets/legal.css">
+</head>
+<body>
+    <div id="content">
+        <div id="topHalf">
+            <%- include('partials/topHeader.ejs') %>
+        </div>
+        <div id="bottomHalf">
+            <pre id="legalInfo"><%- legal %></pre>
+        </div>
+    </div>
+    <%- include('partials/dialog.ejs') %>
+
+    <script>
+        window.pageData = <%- JSON.stringify(data) %>;
+    </script>
+
+    <!-- scripts -->
+    <script src="scripts/dialog.js"></script>
+    <script src="scripts/loggedIn.js"></script>
+</body>
+</html>

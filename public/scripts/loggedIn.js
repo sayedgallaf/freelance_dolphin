@@ -5,5 +5,8 @@ if(window.pageData.authData){
 
     if(topHeaderLogin){
         topHeaderLogin.innerHTML = user.FullName
+        topHeaderLogin.onclick = () => {
+            
+        }
     }
 }
