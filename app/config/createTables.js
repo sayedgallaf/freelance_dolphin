@@ -2,8 +2,8 @@ const db = require('../config/db');
 const User = require('../models/userModel');
 
 (async () => {
-    console.log(await User.getAllUsers())
-    return;
+/*     console.log(await User.getAllUsers())
+    return; */
     /* await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
     console.log("DONE")
