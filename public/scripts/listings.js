@@ -43,7 +43,6 @@ async function searchJobs() {
             filterOptions: filterOptions,
             pageNumber: pageNumber
         };
-        console.log(requestBody)
         const response = await fetch('/searchJobs', {
             method: 'POST', // Assuming you're using POST method in your backend
             headers: {
@@ -63,11 +62,12 @@ async function searchJobs() {
             }
         }
         for(let a =0; a < jobs.length; a++){
-            console.log(jobs[a])
             const {JobID, UserID, Title, Description, Timestamp, FullName, ProfilePicURL, totalQuotes} = jobs[a]
             createJobListing(Title,Timestamp.split("T")[0].replace(/20/, ''),Description,ProfilePicURL ? ProfilePicURL : "assets/pfp.png",FullName, totalQuotes)
         }
         jobList.appendChild(loadMoreBtn)
+        jobList.firstElementChild.click()
+
         resetListings = false;
 
     } catch (error) {

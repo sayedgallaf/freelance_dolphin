@@ -68,9 +68,8 @@ let allDialogs = {
         { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} }
     ],
     jobListingSettings: [
-        { content: 'Job', type: 'label' },
-        { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} },
-        { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+        { type: 'button', content: 'Report Listing', endpointURL: '/report', endpointSuccess:() => {dialogDiv.style.display = "none"} },
+        { type: 'button', content: 'Copy Link', endpointURL: '/copyLink', endpointSuccess:() => {dialogDiv.style.display = "none"} }
     ]
 }
 const dialogDiv = document.getElementById('dialogDiv');

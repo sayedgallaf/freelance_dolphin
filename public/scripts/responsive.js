@@ -18,5 +18,4 @@ document.addEventListener("DOMContentLoaded", () => {
         leftBottomHalf.style.left = `-${sidePanelWidth}`;
         rightBottomHalf.style.right = isClosed ? "0" : `-${sidePanelWidth}`;
     }
-    console.log("hi")
 })

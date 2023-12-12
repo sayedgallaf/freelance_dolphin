@@ -1,10 +1,19 @@
 const jobList = document.getElementById("jobList")
+let selectedJob;
 
 function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, profileName, totalQuotes) {
     // Create the necessary elements
     const jobListing = document.createElement('div');
     jobListing.classList.add('jobListing', 'lightBorder');
     jobListing.onclick = () => {
+        selectedJob = {
+            jobTitle,
+            jobDate,
+            jobDescription,
+            profileImgSrc,
+            profileName,
+            totalQuotes,
+        }
         let selectedJobs = document.querySelectorAll(".jobListing.selected")
         for(let a =0; a < selectedJobs.length; a++){
             selectedJobs[a].classList.remove("selected")
