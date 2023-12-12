@@ -1,0 +1,128 @@
+#jobList{
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+#loadMoreBtn{
+    width: 100%;
+    min-height: 55px;
+    font-size: 24px;
+    font-weight: bold;
+}
+.jobListing{
+    width: 100%;
+    min-height: 200px;
+    border-radius: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+}
+.jobListingTitle{
+    display: block;
+    font-size: 20px;
+    width: 65%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    color: #222830;
+}
+.jobListingDate{
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #222830;
+}
+.jobListingShortDesc{
+    font-size: 16px;
+    font-weight: 500;
+    position: absolute;
+    left: 15px;
+    top: 50px;
+    width: 90%;
+    height: 50%;
+    overflow: hidden;
+    color: #222830;
+}
+.jobListingProfile{
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #222830;
+}
+.jobListingProfilePicture{
+    width: 25px;
+}
+.jobListingProfileName{
+    font-size: 16px;
+    font-weight: bold;
+}
+.jobListingSettings{
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.jobListing.selected{
+    background-color: #222830;
+    border: none;
+    box-shadow: -4px 2px 0px 0px #2CBBBB;
+}
+.jobListing.selected *{
+    color: white;
+}
+
+.jobListing.selected .jobListingSettings img{
+    filter: brightness(1000%);
+}
+@media screen and (max-width: 900px) {
+    #jobList{
+        border-radius: 10px;
+    }
+    #loadMoreBtn{
+        min-height: 40px;
+        font-size: 20px;
+    }
+    .jobListing{
+        border-radius: 10px;
+
+    }
+    .jobListingTitle{
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .jobListingDate{
+        font-size: 12px;
+    }
+    .jobListingShortDesc{
+        font-size: 14px;
+    }
+    .jobListingProfilePicture{
+        width: 20px;
+    }
+    .jobListingProfileName{
+        font-size: 14px;
+    }
+}
