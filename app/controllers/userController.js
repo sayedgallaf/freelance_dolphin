@@ -75,14 +75,14 @@ const UserController = {
             const createdUserId = await User.createUser(newUser);
 
             const expiresIn1Month = 30 * 24 * 60 * 60;
-            const token = jwt.sign({UserID:createdUserId}, process.env.JWT_KEY, { expiresIn: expiresIn1Month });
+            const token = jwt.sign({UserID:UserID}, process.env.JWT_KEY, { expiresIn: expiresIn1Month });
             res.cookie('authorization', token, {
               maxAge: expiresIn1Month * 1000,
               httpOnly: true,
               secure: false
             });
             console.log("test")
-            res.status(201).json({ message: 'User created successfully', userId: createdUserId });
+            res.status(201).json({ message: 'User created successfully' });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
         }
