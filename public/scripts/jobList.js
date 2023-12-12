@@ -39,7 +39,9 @@ function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, prof
 
     const settingsButton = document.createElement('button');
     settingsButton.classList.add('jobListingSettings');
-
+    settingsButton.onclick = () => {
+        generateDialog('jobListingSettings')
+    }
     const settingsImg = document.createElement('img');
     settingsImg.src = 'assets/dots.svg';
 

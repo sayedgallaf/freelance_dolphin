@@ -59,6 +59,18 @@ let allDialogs = {
         { content: 'Message', type: 'label' },
         { type: 'textarea', name: 'Message' },
         { type: 'button', content: 'Submit', endpointURL: '/contact', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    quote: [
+        { content: 'Quote', type: 'label' },
+        { type: 'input', inputType: 'text', name: 'Quote' },
+        { content: 'Message', type: 'label' },
+        { type: 'textarea', name: 'Message' },
+        { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    jobListingSettings: [
+        { content: 'Job', type: 'label' },
+        { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} },
+        { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} }
     ]
 }
 const dialogDiv = document.getElementById('dialogDiv');
