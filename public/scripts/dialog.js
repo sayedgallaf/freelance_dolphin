@@ -23,7 +23,7 @@ let allDialogs = {
         { type: 'input', inputType: 'password', name: 'Password' },
         { content: 'Repeat Password', type: 'label' },
         { type: 'input', inputType: 'password', name: 'Password2' },
-        { type: 'button', content: 'Sign Up', endpointURL: '/signup' },
+        { type: 'button', content: 'Sign Up', endpointURL: '/signup', endpointSuccess: () => {location.reload()} },
         { type: 'desc', content: 'ⓘ By creating this account you agree to our terms and services.' },
     ],
     login: [
