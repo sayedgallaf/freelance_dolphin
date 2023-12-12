@@ -14,6 +14,9 @@ function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, prof
             profileName,
             totalQuotes,
         }
+
+        screen.width <= 900 ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
+
         let selectedJobs = document.querySelectorAll(".jobListing.selected")
         for(let a =0; a < selectedJobs.length; a++){
             selectedJobs[a].classList.remove("selected")
@@ -35,7 +38,7 @@ function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, prof
     shortDescP.textContent = jobDescription;
 
     const profileLink = document.createElement('a');
-    profileLink.href = '/';
+    /* profileLink.href = '/'; */
     profileLink.classList.add('jobListingProfile');
 
     const profileImg = document.createElement('img');
