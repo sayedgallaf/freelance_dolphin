@@ -2,7 +2,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
-const secretKey = process.env.JWT_KEY; 
+const secretKey = process.env.JWT_KEY;
 
 function verifyToken(req, res, next) {
   const token = req.cookies.authorization;
@@ -12,7 +12,9 @@ function verifyToken(req, res, next) {
         res.sendStatus(403); // Forbidden
       } else {
         req.session.authData = await User.getUserById(authData.UserID);
-        delete req.session.authData.Password;
+        if (req.session.authData) {
+          delete req.session.authData.Password;
+        }
         next();
       }
     });

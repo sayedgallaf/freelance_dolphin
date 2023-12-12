@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="stylesheets/general.css">
+    <link rel="stylesheet" href="stylesheets/topHeader.css">
+    <link rel="stylesheet" href="stylesheets/dialog.css">
+    <link rel="stylesheet" href="stylesheets/listings.css">
+</head>
+<body>
+    <div id="content">
+        <div id="topHalf">
+            <%- include('partials/topHeader.ejs') %>
+        </div>
+        <div id="bottomHalf">
+
+            <div id="leftBottomHalf">
+                <button id="leftBottomHalfDrawer" class="responsiveDrawer lightBorder">&rsaquo;</button>
+                <div id="filter" class="lightBorder">
+
+                    <div class="setting">
+                        <span class="settingTitle">Sort By</span>
+                        <div class="settingControls">
+                            <select id="sortBy" class="lightBorder">
+                                <option value="newest">Most Recent</option>
+                                <option value="oldest">Oldest</option>
+                                <option value="mostPopular">Most Popular</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting">
+                        <span class="settingTitle">Quotes Range</span>
+                        <div class="settingControls">
+                            <div id="quotesFilterInputDiv">
+                                <input type="text" id="quotesFilterMin" class="quotesFilterInput lightBorder" placeholder="Minimum">
+                                <input type="text" id="quotesFilterMax" class="quotesFilterInput lightBorder" placeholder="Maximum">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting">
+                        <span class="settingTitle">Skills</span>
+                        <div class="settingControls">
+                            <div id="skillsDiv" class="lightBorder">
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                                <button class="skill lightBorder">Skill</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="applyFilterBtn" class="themedBtn">Apply</button>
+                </div>
+            </div>
+
+            <div id="centerBottomHalf">
+                <div id="jobSection">
+                    <div id="searchDiv">
+                        <input type="text" id="jobSearch" placeholder="Search" class="lightBorder">
+                        <button id="searchBtn" class="lightBorder">Search</button>
+                    </div>
+                    
+                    <%- include('partials/jobList.ejs') %>
+                </div>
+            </div>
+
+            <div id="rightBottomHalf">
+                <button id="rightBottomHalfDrawer" class="responsiveDrawer lightBorder">&lsaquo;</button>
+                <%- include('partials/jobView.ejs') %>
+            </div>
+            
+        </div>
+    </div>
+    <%- include('partials/dialog.ejs') %>
+
+    <script>
+        window.pageData = <%- JSON.stringify(data) %>;
+    </script>
+
+    <!-- scripts -->
+    <script src="scripts/dialog.js"></script>
+    <script src="scripts/responsive.js"></script>
+    <script src="scripts/loggedIn.js"></script>
+    <script src="scripts/jobList.js"></script>
+    <script src="scripts/jobView.js"></script>
+    <script src="scripts/listings.js"></script>
+</body>
+</html>

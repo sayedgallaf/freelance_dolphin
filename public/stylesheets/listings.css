@@ -1,0 +1,388 @@
+#filter{
+    width: 400px;
+    height: 750px;
+    padding-top: 40px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: white;
+}
+.setting{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.settingTitle{
+    font-size: 20px;
+    font-weight: bold;
+    color: #222830;
+}
+#sortBy{
+    width: 100%;
+    border-radius: 10px;
+    color: #222830;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px;
+}
+#quotesFilterInputDiv{
+    display: flex;
+    gap: 10px;
+}
+.quotesFilterInput{
+    flex: 1;
+    box-sizing: border-box;
+    width: 0;
+    padding: 5px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #222830;
+}
+#skillsDiv{
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    padding: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    height: min(350px, 30vh);
+}
+.skill{
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 500;
+    background-color: transparent;
+    color: #222830;
+    cursor: pointer;
+}
+#applyFilterBtn{
+    width: 300px;
+    height: 55px;
+    font-size: 24px;
+    font-weight: bold;
+}
+#loadMoreBtn{
+    width: 100%;
+    min-height: 55px;
+    font-size: 24px;
+    font-weight: bold;
+}
+#jobSection{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 650px;
+    height: 100%;
+}
+#searchDiv{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+#searchBtn{
+    height: 100%;
+    width: 100px;
+    font-size: 20px;
+    font-weight: bold;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: white;
+    color: #222830;
+    border-left: none;
+    cursor: pointer;
+}
+#jobSearch{
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px 0;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+
+}
+#jobList{
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.jobListing{
+    width: 100%;
+    min-height: 200px;
+    border-radius: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+}
+.jobListingTitle{
+    display: block;
+    font-size: 20px;
+    width: 65%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    color: #222830;
+}
+.jobListingDate{
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #222830;
+}
+.jobListingShortDesc{
+    font-size: 16px;
+    font-weight: 500;
+    position: absolute;
+    left: 15px;
+    top: 50px;
+    width: 90%;
+    height: 50%;
+    overflow: hidden;
+    color: #222830;
+}
+.jobListingProfile{
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #222830;
+}
+.jobListingProfilePicture{
+    width: 25px;
+}
+.jobListingProfileName{
+    font-size: 16px;
+    font-weight: bold;
+}
+.jobListingSettings{
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.jobListing.selected{
+    background-color: #222830;
+    border: none;
+    box-shadow: -4px 2px 0px 0px #2CBBBB;
+}
+.jobListing.selected *{
+    color: white;
+}
+
+.jobListing.selected .jobListingSettings img{
+    filter: brightness(1000%);
+}
+
+#jobView{
+    width: 700px;
+    height: 100%;
+    padding: 25px;
+    box-sizing: border-box;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-radius: 20px;
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    overflow-y: auto;
+    background-color: white;
+}
+#jobViewHeader{
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+}
+#jobViewHeaderInfo{
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    width: 75%;
+}
+#jobViewHeaderInfoTitle{
+    font-size: 22px;
+    width: 100%;
+    font-weight: bold;
+}
+#jobViewHeaderInfoSubtitle{
+    font-size: 16px;
+}
+#jobHeaderBtn{
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    width: 25%;
+}
+#quoteBtn{
+    font-size: 24px;
+    padding: 7px;
+    font-weight: bold;
+    width: 100%;
+}
+#totalQuotes{
+    font-size: 14px;
+}
+#jobViewBody{
+    width: 100%;
+}
+#jobViewBodyText{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 20px;
+}
+
+@media screen and (max-width: 900px) {
+    #filter{
+        width: 100%;
+        height: 100%;
+        gap: 15px;
+        padding-top: 20px;
+        overflow: hidden;
+        overflow-y: auto;
+        border-radius: 10px;
+    }
+    .setting{
+        width: 250px;
+    }
+    #skillsDiv{
+        height: min(250px, 25vh);
+    }
+    .skill{
+        font-size: 16px;
+    }
+    #applyFilterBtn{
+        height: 40px;
+        width: 250px;
+        font-size: 20px;
+    }
+    #loadMoreBtn{
+        min-height: 40px;
+        font-size: 20px;
+    }
+
+    #jobSection{
+        height: 100%;
+        width: 100%;
+        padding: 0 25px;
+        box-sizing: border-box;
+        gap: 10px;
+    }
+
+    #searchBtn{
+        font-size: 16px;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+        
+    #jobSearch{
+        font-size: 16px;
+        padding: 10px 0;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+    #jobList{
+        border-radius: 10px;
+    }
+    .jobListing{
+        border-radius: 10px;
+
+    }
+    .jobListingTitle{
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .jobListingDate{
+        font-size: 12px;
+    }
+    .jobListingShortDesc{
+        font-size: 14px;
+    }
+    .jobListingProfilePicture{
+        width: 20px;
+    }
+    .jobListingProfileName{
+        font-size: 14px;
+    }
+    #jobView{
+        width: 100%;
+        padding: 10px;
+        gap: 15px;
+        border-radius: 10px;
+    }
+    #jobViewHeader{
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    #jobViewHeaderInfo{
+        display: flex;
+        width: 100%;
+    }
+    #jobViewHeaderInfoTitle{
+        font-size: 18px;
+/*         text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; */
+    }
+    #jobViewHeaderInfoSubtitle{
+        font-size: 14px;
+/*         text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; */
+    }
+    #jobHeaderBtn{
+        width: 100%;
+    }
+    #quoteBtn{
+        font-size: 20px;
+        font-weight: bold;
+    }
+    #totalQuotes{
+        font-size: 14px;
+    }
+    #jobViewBodyText{
+        font-size: 18px;
+    }
+    
+
+}

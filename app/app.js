@@ -29,6 +29,7 @@ const isAdmin = require("./middleware/isAdmin")
 //controllers
 const UserController = require('./controllers/userController');
 const ContactController = require('./controllers/contactController');
+const JobController = require('./controllers/jobController');
 
 
 //user routers
@@ -45,6 +46,10 @@ app.post("/contact", ContactController.createContact)
 app.post("/getAllContacts",isAdmin, ContactController.getAllContacts)
 app.post("/deleteContact",isAdmin, ContactController.deleteContact)
 
+//job routes
+app.post("/getJobByID", JobController.getJobByID)
+app.post("/searchJobs", JobController.searchAndFilterJobs)
+
 app.get("/", verifyToken, (req,res) => {
     res.render("landing", {data:{authData:req.session.authData}})
 })
@@ -55,6 +60,10 @@ app.get("/terms", verifyToken, (req,res) => {
 
 app.get("/privacy", verifyToken, (req,res) => {
     res.render("legal", {data:{authData:req.session.authData}, legal:privacy})
+})
+
+app.get("/listings", verifyToken, (req,res) => {
+    res.render("listings", {data:{authData:req.session.authData}})
 })
 
 

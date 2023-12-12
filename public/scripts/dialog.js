@@ -126,7 +126,7 @@ function generateDialog(dialogName) {
                 newElement.setAttribute('type', 'button'); // Change type to 'button'
                 newElement.textContent = element.content || 'Submit';
                 newElement.classList.add('dialogBtn');
-                newElement.classList.add('themedButton');
+                newElement.classList.add('themedBtn');
                 newElement.addEventListener('click', function () {
                     sendDataToEndpoint(formData, element.endpointURL, element.endpointSuccess);
                 });

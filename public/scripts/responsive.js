@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const sidePanelWidth = "75vw"
+    const sidePanelWidth = "85vw"
     let leftBottomHalfDrawer = document.getElementById("leftBottomHalfDrawer")
     let rightBottomHalfDrawer = document.getElementById("rightBottomHalfDrawer")
 
