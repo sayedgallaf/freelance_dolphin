@@ -38,6 +38,7 @@
     position: absolute;
     bottom: 0;
     right: min(5vw,100px);
+    z-index: -1;
 }
 #postJobBtn{
     font-size: 30px;
@@ -129,6 +130,11 @@
     font-weight: bold;
     color: #222830;
     cursor: pointer;
+}
+@media screen and (max-width: 1400px) {
+    #landingDesign{
+        right: 0px;
+    }
 }
 @media screen and (max-width: 900px) {
     #landingContent{

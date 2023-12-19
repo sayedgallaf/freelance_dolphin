@@ -1,4 +1,10 @@
 <div id="topHeader">
-    <a href="/"><img src="assets/logo.svg" id="topHeaderLogo"></a>
-    <button id="topHeaderLogin" class="themedBtn" onclick="generateDialog('login')">Login</button>
+    <a href="/"><img src="/assets/logo.svg" id="topHeaderLogo"></a>
+    <button id="topHeaderLogin" class="themedBtn" onclick="<%= data.authData ? 'window.location.href=`/dashboard`' : 'generateDialog(`login`)' %>">
+        <% if (data.authData && data.authData.FullName) { %>
+            <%= data.authData.FullName %>
+        <% } else { %>
+            Login
+        <% } %>
+    </button>
 </div>

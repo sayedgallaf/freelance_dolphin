@@ -13,12 +13,35 @@ const User = {
 
     async getUserById(id) {
         try {
-            const [rows] = await db.query('SELECT * FROM User WHERE UserID = ?', [id]);
-            return rows[0];
+            const [userRows] = await db.query('SELECT * FROM User WHERE UserID = ?', [id]);
+    
+            if (userRows.length === 0) {
+                return null;
+            }
+    
+            const user = userRows[0];
+    
+            const [skillRows] = await db.query(
+                'SELECT s.SkillID, s.SkillName FROM Skill s INNER JOIN UserSkill us ON s.SkillID = us.SkillID WHERE us.UserID = ?',
+                [id]
+            );
+    
+            const skills = skillRows.map((row) => ({
+                skillId: row.SkillID,
+                skillName: row.SkillName
+            }));
+    
+            user.skills = skills;
+    
+            return user;
         } catch (error) {
-            throw new Error(`Error fetching user by ID: ${error.message}`);
+            // Handle the error gracefully
+            console.log(error)
+            return null;
         }
     },
+    
+    
 
     async createUser(user) {
         const { UserID, UserType, FullName, Email, Password, Bio } = user;

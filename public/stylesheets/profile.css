@@ -1,0 +1,242 @@
+#jobView{
+    height: 80%;
+    border: 2px solid #C2C2C2;
+    border-radius: 20px !important;
+
+}
+#jobViewAndReviewDiv{
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: white;
+}
+#jobHeaderBtn{
+    display: none;
+}
+#loadMoreBtn{
+    display: none;
+}
+
+#profileDiv{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    height: 95%;
+    width: 400px;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 20px;
+    background-color: white;
+    overflow: hidden;
+    overflow-y: auto;
+}
+#profileSettings{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+#profileType{
+    font-size: 20px;
+    font-weight: bold;
+}
+#profileBtn{
+    font-size: 20px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+#profileInfoDiv{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+}
+#profileImg{
+    width: 175px;
+}
+#profileName{
+    font-size: 24px;
+    font-weight: bold;
+}
+#profileBioDiv{
+    height: 20%;
+    width: 90%;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 20px;
+    align-items: center;
+    
+}
+#profileBioTitle{
+    font-size: 20px;
+    font-weight: bold;
+}
+#profileBio{
+    font-size: 18px;
+}
+#profileSkillsDiv{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    height: 40%;
+    width: 90%;
+    border-radius: 20px;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+
+}
+#profileSkillsTitle{
+    font-size: 20px;
+    font-weight: bold;
+}
+#profileSkills{
+    width: 90%;
+    height: 90%;
+    border-radius: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-content: flex-start;
+
+}
+.profileSkill{
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: transparent;
+    color: #222830;
+}
+.review{
+    width: 100%;
+    min-height: 200px;
+    border-radius: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+}
+.reviewTitle{
+    display: block;
+    font-size: 20px;
+    width: 65%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    color: #222830;
+}
+.reviewDate{
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #222830;
+}
+.reviewShortDesc{
+    font-size: 16px;
+    font-weight: 500;
+    position: absolute;
+    left: 15px;
+    top: 50px;
+    width: 90%;
+    height: 50%;
+    overflow: hidden;
+    color: #222830;
+}
+.reviewProfile{
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #222830;
+}
+.reviewProfilePicture{
+    width: 25px;
+}
+.reviewProfileName{
+    font-size: 16px;
+    font-weight: bold;
+}
+.reviewSettings{
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+@media screen and (max-width: 1400px) {
+    #profileDiv{
+        width: 30vw;
+    }
+}
+@media screen and (max-width: 900px) {
+    #jobViewAndReviewDiv{
+        height: 100%;
+        width: 100%;
+        border-radius: 20px;
+        border: 2px solid #C2C2C2;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    #profileImg{
+        width: 20vw;
+    }
+    #profileDiv{
+        width: 100%;
+        height: 100%;
+    }
+    #profileType{
+        font-size: 18px;
+    }
+    #profileName{
+        font-size: 20px;
+    }
+    #profileBioTitle{
+        font-size: 18px;
+    }
+    #profileBio{
+        font-size: 16px;
+    }
+    .review{
+        border-radius: 10px;
+
+    }
+    .reviewTitle{
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .reviewDate{
+        font-size: 12px;
+    }
+    .reviewShortDesc{
+        font-size: 14px;
+    }
+    .reviewProfilePicture{
+        width: 20px;
+    }
+    .reviewProfileName{
+        font-size: 14px;
+    }
+
+}

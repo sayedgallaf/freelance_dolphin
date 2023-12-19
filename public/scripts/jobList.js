@@ -1,12 +1,14 @@
 const jobList = document.getElementById("jobList")
 let selectedJob;
 
-function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, profileName, totalQuotes) {
+function createJobListing(JobID, UserID, jobTitle, jobDate, jobDescription, profileImgSrc, profileName, totalQuotes) {
     // Create the necessary elements
     const jobListing = document.createElement('div');
     jobListing.classList.add('jobListing', 'lightBorder');
     jobListing.onclick = () => {
         selectedJob = {
+            JobID,
+            UserID,
             jobTitle,
             jobDate,
             jobDescription,
@@ -38,7 +40,7 @@ function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, prof
     shortDescP.textContent = jobDescription;
 
     const profileLink = document.createElement('a');
-    /* profileLink.href = '/'; */
+    profileLink.href = '/profile/'+UserID;
     profileLink.classList.add('jobListingProfile');
 
     const profileImg = document.createElement('img');
@@ -55,7 +57,7 @@ function createJobListing(jobTitle, jobDate, jobDescription, profileImgSrc, prof
         generateDialog('jobListingSettings')
     }
     const settingsImg = document.createElement('img');
-    settingsImg.src = 'assets/dots.svg';
+    settingsImg.src = '/assets/dots.svg';
 
     // Append elements accordingly
     profileLink.appendChild(profileImg);

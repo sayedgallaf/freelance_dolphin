@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="/stylesheets/general.css">
+    <link rel="stylesheet" href="/stylesheets/topHeader.css">
+    <link rel="stylesheet" href="/stylesheets/dialog.css">
+    <link rel="stylesheet" href="/stylesheets/jobList.css">
+    <link rel="stylesheet" href="/stylesheets/jobView.css">
+    <link rel="stylesheet" href="/stylesheets/profile.css">
+</head>
+<body>
+    <div id="content">
+        <div id="topHalf">
+            <%- include('partials/topHeader.ejs') %>
+        </div>
+        <div id="bottomHalf">
+
+            <div id="leftBottomHalf">
+                <button id="leftBottomHalfDrawer" class="responsiveDrawer lightBorder">&rsaquo;</button>
+                <div id="profileDiv" class="lightBorder">
+                    <div id="profileSettings">
+                        <span id="profileType"><%= data.user.UserType %></span>
+                        <button id="profileBtn" onclick="generateDialog('profileSettings')"><img src="/assets/dots.svg"></button>
+                    </div>
+                    <div id="profileInfoDiv">
+                        <img id="profileImg" src="<%= data.user.ProfilePicURL %>" alt="">
+                        <span id="profileName"><%= data.user.FullName %></span>
+                    </div>
+                    <div id="profileBioDiv" class="lightBorder">
+                        <span id="profileBioTitle">Bio</span>
+                        <span id="profileBio"><%= data.user.Bio %></span>
+                    </div>
+                    <div id="profileSkillsDiv" class="lightBorder">
+                        <span id="profileSkillsTitle">Skills and Expertise</span>
+                        <div id="profileSkills">
+                            <% data.user.skills.forEach(function(skill) { %>
+                                <span class="profileSkill lightBorder"><%= skill.skillName %></span>
+                            <% }); %>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div id="centerBottomHalf">
+                <div id="jobSection">
+                    <%- include('partials/jobList.ejs') %>
+                </div>
+            </div>
+
+            <div id="rightBottomHalf">
+                <button id="rightBottomHalfDrawer" class="responsiveDrawer lightBorder">&lsaquo;</button>
+                <div id="jobViewAndReviewDiv">
+                    <%- include('partials/jobView.ejs') %>
+                    <div id="review">
+                        <div class="review lightBorder">
+                            <span class="reviewTitle">Review from Employer: Honest and Hardworking</span>
+                            <span class="reviewDate">05/11</span>
+                            <p class="reviewShortDesc">Abdullah is very reliable and has managed to finish all tasks before the deadline.</p>
+                            <a href="/" class="reviewProfile"><img src="/assets/pfp.png" class="reviewProfilePicture"><span class="reviewProfileName">Abdullah Mohammed</span></a>
+                            <button class="reviewSettings"><img src="/assets/dots.svg"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <%- include('partials/dialog.ejs') %>
+
+    <script>
+        window.pageData = <%- JSON.stringify(data) %>;
+    </script>
+
+    <!-- scripts -->
+    <script src="/scripts/dialog.js"></script>
+    <script src="/scripts/responsive.js"></script>
+    <script src="/scripts/loggedIn.js"></script>
+    <script src="/scripts/jobList.js"></script>
+    <script src="/scripts/jobView.js"></script>
+    <script src="/scripts/profile.js"></script>
+</body>
+</html>

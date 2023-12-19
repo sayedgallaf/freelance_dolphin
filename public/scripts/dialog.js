@@ -62,14 +62,32 @@ let allDialogs = {
     ],
     quote: [
         { content: 'Quote', type: 'label' },
-        { type: 'input', inputType: 'text', name: 'Quote' },
+        { type: 'val', name: 'JobID',value:(() => {return selectedJob.JobID}) },
+        { type: 'val', name: 'UserID', value:(() => {return window.pageData.authData.UserID}) },
+        { type: 'input', inputType: 'text', name: 'QuoteAmount' },
         { content: 'Message', type: 'label' },
-        { type: 'textarea', name: 'Message' },
-        { type: 'button', content: 'Submit', endpointURL: '/quote', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+        { type: 'textarea', name: 'QuoteMessage' },
+        { type: 'button', content: 'Submit', endpointURL: '/createQuote', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    reportJob: [
+        { type: 'val', name: 'ReportType',value:(() => {return "JobID: "+selectedJob.JobID}) },
+        { type: 'val', name: 'ReporterID', value:(() => {return window.pageData.authData ? window.pageData.authData.UserID : null}) },
+        { content: 'Report', type: 'label' },
+        { type: 'textarea', name: 'ReportDetails' },
+        { type: 'button', content: 'Submit', endpointURL: '/createReport', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    reportUser: [
+        { type: 'val', name: 'ReportType',value:(() => {return "UserID: "+window.pageData.user.UserID}) },
+        { type: 'val', name: 'ReporterID', value:(() => {return window.pageData.authData ? window.pageData.authData.UserID : null}) },
+        { content: 'Report', type: 'label' },
+        { type: 'textarea', name: 'ReportDetails' },
+        { type: 'button', content: 'Submit', endpointURL: '/createReport', endpointSuccess:() => {dialogDiv.style.display = "none"} }
     ],
     jobListingSettings: [
-        { type: 'button', content: 'Report Listing', endpointURL: '/report', endpointSuccess:() => {dialogDiv.style.display = "none"} },
-        { type: 'button', content: 'Copy Link', endpointURL: '/copyLink', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+        { type: 'functionButton', content: 'Report Listing', onclick:() => {generateDialog("reportJob")} }
+    ],
+    profileSettings: [
+        { type: 'functionButton', content: 'Report User', onclick:() => {generateDialog("reportUser")} }
     ]
 }
 const dialogDiv = document.getElementById('dialogDiv');
@@ -109,7 +127,7 @@ function generateDialog(dialogName) {
                 newElement.onclick = element.onclick;
                 newElement.classList.add("dialogFunction")
                 break;
-
+            
             case 'input':
                 newElement = document.createElement('input');
                 newElement.setAttribute('type', element.inputType || 'text');
@@ -122,6 +140,9 @@ function generateDialog(dialogName) {
                 });
                 break;
 
+            case 'val':
+                formData[element.name] = element.value()
+                break;
             case 'textarea':
                 newElement = document.createElement('textarea');
                 newElement.setAttribute('name', element.name || '');
@@ -141,6 +162,15 @@ function generateDialog(dialogName) {
                 newElement.addEventListener('click', function () {
                     sendDataToEndpoint(formData, element.endpointURL, element.endpointSuccess);
                 });
+                break;
+
+            case 'functionButton':
+                newElement = document.createElement('button');
+                newElement.setAttribute('type', 'button'); // Change type to 'button'
+                newElement.textContent = element.content || 'Submit';
+                newElement.classList.add('dialogBtn');
+                newElement.classList.add('themedBtn');
+                newElement.onclick = element.onclick
                 break;
 
             case 'multipleChoice':

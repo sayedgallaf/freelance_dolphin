@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const resend = require('../config/email');
 
 const UserController = {
-
     async loginUser(req, res) {
         try {
             const { Email, Password } = req.body;

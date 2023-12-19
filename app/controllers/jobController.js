@@ -37,9 +37,8 @@ const JobController = {
             const { keyword, filterOptions, pageNumber } = req.body;
     
             const jobs = await Job.searchAndFilterJobs({ keyword, filterOptions, pageNumber });
-    
             if (!jobs || jobs.length === 0) {
-                return res.status(404).json({ message: 'No jobs found for the provided criteria' });
+                return res.status(200).json({ message: 'No jobs found for the provided criteria', jobs:[] });
             }
     
             res.status(200).json({ jobs });

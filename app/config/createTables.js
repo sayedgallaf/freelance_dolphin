@@ -1,10 +1,10 @@
 const db = require('../config/db');
 const User = require('../models/userModel');
-
+const bcrypt = require("bcrypt");
 (async () => {
 /*     console.log(await User.getAllUsers())
     return; */
-    /* await db.query(`DROP DATABASE freelance_dolphin`);
+/*     await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
     console.log("DONE")
     return; */
@@ -16,6 +16,7 @@ const User = require('../models/userModel');
           Email VARCHAR(50),
           Password VARCHAR(100),
           ProfilePicURL VARCHAR(100),
+          Balance DECIMAL(15, 2) DEFAULT 0.00,
           Bio VARCHAR(500)
         );`,
 
@@ -154,7 +155,16 @@ const User = require('../models/userModel');
             Timestamp DATE,
             bannedUntil DATE,
             FOREIGN KEY (UserID) REFERENCES User(UserID)
-        );`
+        );`,
+        `CREATE TABLE Escrow (
+          EscrowID VARCHAR(20) PRIMARY KEY,
+          JobID VARCHAR(20) NOT NULL,
+          UserID VARCHAR(20) NOT NULL,
+          Amount DECIMAL(15, 2),
+          Timestamp DATE,
+          FOREIGN KEY (JobID) REFERENCES Job(JobID),
+          FOREIGN KEY (UserID) REFERENCES User(UserID)
+      );`
 
 /*         `ALTER TABLE User
           ADD FOREIGN KEY (UserID) REFERENCES Job(UserID),
@@ -262,18 +272,65 @@ Spectrum Solutions Ltd. is an equal opportunity employer committed to fostering 
       "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job9', '123123123', 'Systems Administrator', ?, '2023-09-25')",
       "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job10', '123123123', 'Content Writer', ?, '2023-10-14')"
     ];
-    
+const skillInserts = [`INSERT INTO Skill (SkillID, SkillName) VALUES ('1001', 'Web Development');`,
+`INSERT INTO Skill (SkillID, SkillName) VALUES ('1002', 'Graphic Design');`,
+`INSERT INTO Skill (SkillID, SkillName) VALUES ('1003', 'Copywriting');`,
+`INSERT INTO Skill (SkillID, SkillName) VALUES ('1004', 'Digital Marketing');`,
+`INSERT INTO Skill (SkillID, SkillName) VALUES ('1005', 'Mobile App Development');`]
+const jobSkillInserts = [
+  // For Job 'Software Engineer' (job4)
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job4_skill1', 'job4', '1001');", // Web Development
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job4_skill2', 'job4', '1004');", // Digital Marketing
+
+  // For Job 'Financial Analyst' (job5)
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job5_skill1', 'job5', '1003');", // Copywriting
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job5_skill2', 'job5', '1004');", // Digital Marketing
+
+  // For Job 'UI/UX Designer' (job6)
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job6_skill1', 'job6', '1001');", // Web Development
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job6_skill2', 'job6', '1002');", // Graphic Design
+
+  // For Job 'Product Manager' (job7)
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job7_skill1', 'job7', '1002');", // Graphic Design
+  "INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES ('job7_skill2', 'job7', '1005');"  // Mobile App Development
+];
+
+const UserSkillInserts = [
+  // For Job 'Software Engineer' (job4)
+  "INSERT INTO UserSkill (UserSkillID, UserID, SkillID) VALUES ('123123123_skill1', '123123123', '1001');",
+  "INSERT INTO UserSkill (UserSkillID, UserID, SkillID) VALUES ('123123123_skill2', '123123123', '1004');"
+];
+
     for(let a =0; a < sqlStatements.length; a++){
       await db.query(sqlStatements[a]);
     }
 
-    const sqlStatement = `INSERT INTO User (UserID, UserType, FullName, Email, Password, Bio)
-    VALUES ('123123123', 'regular', 'John Smith', 'john@example.com', 'hashedPassword', 'I am a new user.')`
+    const sqlStatement = `INSERT INTO User (UserID, UserType, FullName, Email, Password, ProfilePicURL, Bio)
+    VALUES ('123123123', 'employer', 'John Smith', 'john@example.com', '${await bcrypt.hash("password", 10)}','/assets/pfp.png', 'I am John.')`
+
+    const sqlStatement2 = `INSERT INTO User (UserID, UserType, FullName, Email, Password, ProfilePicURL, Bio)
+    VALUES ('123123124', 'freelancer', 'Ali Ahmed', 'ahmed@example.com', '${await bcrypt.hash("password", 10)}','/assets/pfp.png', 'I am Ahmed.')`
+
+    const sqlStatement3 = `INSERT INTO User (UserID, UserType, FullName, Email, Password, ProfilePicURL, Bio)
+    VALUES ('123123125', 'admin', 'Mohammned Ali', 'mohd@example.com', '${await bcrypt.hash("adminPass123321", 10)}','/assets/pfp.png', 'I am an Admin.')`
     
     await db.query(sqlStatement)
+    await db.query(sqlStatement2)
+    await db.query(sqlStatement3)
 
     for(let a =0; a < jobInserts.length; a++){
         await db.query(jobInserts[a],[a%2 == 0 ? description2 : description1]);
+    }
+
+    for(let a =0; a < skillInserts.length; a++){
+      await db.query(skillInserts[a]);
+    }
+
+    for(let a =0; a < jobSkillInserts.length; a++){
+      await db.query(jobSkillInserts[a]);
+    }
+    for(let a =0; a < UserSkillInserts.length; a++){
+      await db.query(UserSkillInserts[a]);
     }
 
     console.log(await db.query('SHOW TABLES'))

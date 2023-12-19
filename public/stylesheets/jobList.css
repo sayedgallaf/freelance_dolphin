@@ -1,3 +1,10 @@
+#jobSection{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: min(35vw,650px);
+    height: 100%;
+}
 #jobList{
     flex: 1;
     width: 100%;
@@ -97,7 +104,19 @@
 .jobListing.selected .jobListingSettings img{
     filter: brightness(1000%);
 }
+@media screen and (max-width: 1400px) {
+    #jobSection{
+        width: 45vw;
+    }
+}
 @media screen and (max-width: 900px) {
+    #jobSection{
+        height: 100%;
+        width: 100%;
+        padding: 0 25px;
+        box-sizing: border-box;
+        gap: 10px;
+    }
     #jobList{
         border-radius: 10px;
     }

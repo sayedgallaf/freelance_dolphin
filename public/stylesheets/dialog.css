@@ -79,9 +79,10 @@
 
 @media screen and (max-width: 900px) {
     #dynamicForm{
-        width: 300px;
+        width: 90%;
         gap: 15px;
         padding: 40px;
+        box-sizing: border-box;
     }
     .dialogLabel{
         font-size: 20px;

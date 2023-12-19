@@ -14,6 +14,8 @@ function verifyToken(req, res, next) {
         req.session.authData = await User.getUserById(authData.UserID);
         if (req.session.authData) {
           delete req.session.authData.Password;
+        }else{
+          req.session.authData = null
         }
         next();
       }

@@ -6,22 +6,20 @@
     <title>Document</title>
     <!-- stylesheets -->
     <link rel="stylesheet" href="/stylesheets/general.css">
-    <link rel="stylesheet" href="/stylesheets/topHeader.css">
     <link rel="stylesheet" href="/stylesheets/dialog.css">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
 </head>
 <body>
     <div id="content">
-        <div id="topHalf">
-            <%- include('partials/topHeader.ejs') %>
-        </div>
         <div id="bottomHalf">
 
             <div id="leftBottomHalf">
                 <button id="leftBottomHalfDrawer" class="responsiveDrawer lightBorder">&rsaquo;</button>
+                <%- include('partials/sideHeader.ejs') %>
             </div>
 
             <div id="centerBottomHalf">
-
+                
             </div>
 
             <div id="rightBottomHalf">

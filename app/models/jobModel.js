@@ -12,7 +12,12 @@ const Job = {
 
     async getJobsByUser(UserID) {
         try {
-            const [rows] = await db.query('SELECT * FROM Job WHERE UserID = ?', [UserID]);
+            const [rows] = await db.query(`SELECT j.*, u.UserID, u.UserType, u.FullName, u.Email, u.ProfilePicURL, u.Bio, 
+            COALESCE(COUNT(q.JobID), 0) AS totalQuotes, GROUP_CONCAT(js.SkillID) AS jobSkills
+            FROM Job j 
+            LEFT JOIN JobSkill js ON j.JobID = js.JobID
+            LEFT JOIN User u ON j.UserID = u.UserID
+            LEFT JOIN Quote q ON j.JobID = q.JobID where u.UserID = ? GROUP BY j.JobID`, [UserID]);
             return rows;
         } catch (error) {
             throw new Error(`Error fetching jobs by user: ${error.message}`);
@@ -22,63 +27,68 @@ const Job = {
     async searchAndFilterJobs({ keyword, filterOptions, pageNumber }) {
         try {
             const limitPerPage = 5; // Results per page
-
+    
             let sql = `
-                SELECT j.*, u.UserID, u.UserType, u.FullName, u.Email, u.ProfilePicURL, u.Bio, COUNT(q.JobID) AS totalQuotes, GROUP_CONCAT(js.SkillID) AS jobSkills
+                SELECT j.*, u.UserID, u.UserType, u.FullName, u.Email, u.ProfilePicURL, u.Bio, 
+                COALESCE(COUNT(q.JobID), 0) AS totalQuotes, GROUP_CONCAT(js.SkillID) AS jobSkills
                 FROM Job j 
-                LEFT JOIN Quote q ON j.JobID = q.JobID
                 LEFT JOIN JobSkill js ON j.JobID = js.JobID
                 LEFT JOIN User u ON j.UserID = u.UserID
+                LEFT JOIN Quote q ON j.JobID = q.JobID
                 WHERE (j.Title LIKE ? OR j.Description LIKE ?)`;
-
+    
             const likeKeyword = `%${keyword}%`;
             const values = [likeKeyword, likeKeyword];
-
+    
             const { skills, totalQuotesMin, totalQuotesMax, sortBy } = filterOptions;
-
+    
             if (skills && skills.length > 0) {
                 const skillConditions = skills.map(() => 'js.SkillID = ?').join(' OR ');
                 sql += ' AND (' + skillConditions + ')';
                 values.push(...skills);
             }
-
+    
+            sql += ' GROUP BY j.JobID'; // Grouping by JobID
+    
             if (totalQuotesMin !== undefined) {
-                sql += ' AND j.JobID IN (SELECT JobID FROM Quote GROUP BY JobID HAVING COUNT(*) >= ?)';
+                sql += ' HAVING totalQuotes >= ?';
                 values.push(totalQuotesMin);
             }
-
+    
             if (totalQuotesMax !== undefined) {
-                sql += ' AND j.JobID IN (SELECT JobID FROM Quote GROUP BY JobID HAVING COUNT(*) <= ?)';
+                sql += ' HAVING totalQuotes <= ?';
                 values.push(totalQuotesMax);
             }
-
+    
             switch (sortBy) {
                 case 'newest':
-                    sql += ' GROUP BY j.JobID ORDER BY j.Timestamp DESC';
+                    sql += ' ORDER BY j.Timestamp DESC';
                     break;
                 case 'oldest':
-                    sql += ' GROUP BY j.JobID ORDER BY j.Timestamp ASC';
+                    sql += ' ORDER BY j.Timestamp ASC';
                     break;
                 case 'mostPopular':
-                    sql += ' GROUP BY j.JobID ORDER BY COUNT(q.JobID) DESC';
+                    sql += ' ORDER BY totalQuotes DESC'; // Ordering by totalQuotes
                     break;
                 default:
                     break;
             }
-
+    
             if (pageNumber && pageNumber > 0) {
                 const offset = (pageNumber - 1) * limitPerPage;
                 sql += ` LIMIT ${offset}, ${limitPerPage}`;
             } else {
                 sql += ` LIMIT ${limitPerPage}`;
             }
-
+    
             const [rows] = await db.query(sql, values);
             return rows;
         } catch (error) {
+            console.log(error);
             throw new Error(`Error searching and filtering jobs: ${error.message}`);
         }
     },
+    
 
     async createJob(job) {
         const { JobID, UserID, Title, Description, Timestamp } = job;

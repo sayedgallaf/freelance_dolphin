@@ -61,10 +61,17 @@
 .skill{
     padding: 2px 5px;
     border-radius: 5px;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
     background-color: transparent;
     color: #222830;
+    cursor: pointer;
+}
+.skill.selected{
+    border-color: #222830;
+    background: #222830;
+    color: white;
+    box-shadow: -4px 2px 0px 0px #2CBBBB;
     cursor: pointer;
 }
 #applyFilterBtn{
@@ -72,13 +79,6 @@
     height: 55px;
     font-size: 24px;
     font-weight: bold;
-}
-#jobSection{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 650px;
-    height: 100%;
 }
 #searchDiv{
     display: flex;
@@ -108,17 +108,9 @@
     border-bottom-left-radius: 20px;
 
 }
-
-
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1400px) {
     #filter{
-        width: 100%;
-        height: 100%;
-        gap: 15px;
-        padding-top: 20px;
-        overflow: hidden;
-        overflow-y: auto;
-        border-radius: 10px;
+        width: 30vw;
     }
     .setting{
         width: 250px;
@@ -132,6 +124,51 @@
     #applyFilterBtn{
         height: 40px;
         width: 250px;
+        font-size: 20px;
+    }
+
+    #jobSection{
+        height: 100%;
+        width: 100%;
+        gap: 10px;
+    }
+
+    #searchBtn{
+        font-size: 16px;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+        
+    #jobSearch{
+        font-size: 16px;
+        padding: 10px 0;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    #filter{
+        width: 100%;
+        height: 100%;
+        gap: 15px;
+        padding-top: 20px;
+        overflow: hidden;
+        overflow-y: auto;
+        border-radius: 10px;
+    }
+    .setting{
+        width: 90%;
+    }
+    #skillsDiv{
+        height: min(250px, 25vh);
+    }
+    .skill{
+        font-size: 16px;
+    }
+    #applyFilterBtn{
+        height: 40px;
+        width: 90%;
         font-size: 20px;
     }
 

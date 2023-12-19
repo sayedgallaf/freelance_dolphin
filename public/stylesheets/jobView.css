@@ -1,5 +1,5 @@
 #jobView{
-    width: 700px;
+    width: min(35vw,700px);
     height: 100%;
     padding: 25px;
     box-sizing: border-box;
@@ -13,6 +13,7 @@
     overflow: hidden;
     overflow-y: auto;
     background-color: white;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1) inset;
 }
 #jobViewHeader{
     display: flex;
@@ -51,6 +52,7 @@
 }
 #totalQuotes{
     font-size: 14px;
+    white-space: nowrap;
 }
 #jobViewBody{
     width: 100%;
@@ -59,6 +61,14 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     font-size: 20px;
+}
+
+
+@media screen and (max-width: 1400px) {
+    #jobView{
+        width: 45vw;
+    }
+
 }
 
 @media screen and (max-width: 900px) {

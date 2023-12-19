@@ -1,0 +1,17 @@
+<div id="sideHeader">
+    <div id="sideHeaderTop">
+        <img src="/assets/logo2.svg">
+    </div>
+    <div id="sideHeaderCenter">
+        <% data.sidePanelURLs.forEach((item) => { %>
+            <a href="<%= item.href %>" class="sideHeaderURL"><%= item.title %></a>
+        <% }); %>
+        <% if (data.authData.UserType === "employer") { %>
+            <button class="sideHeaderBtn">Create Job</button>
+        <% } %>
+    </div>
+    <div id="sideHeaderBottom">
+        <button class="sideHeaderBtn">Logout</button>
+        <span id="emailAddress"><%= data.authData.Email %></span>
+    </div>
+</div>
