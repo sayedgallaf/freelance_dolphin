@@ -1,7 +1,16 @@
 const jobList = document.getElementById("jobList")
 let selectedJob;
+function getShortDateFormat(date) {
+    date = new Date(date);
+    date = new Date(date.getTime() - ( date.getTimezoneOffset() * 60000 ) );
+    const twoDigitYear = date.getFullYear().toString().slice(-2); // Extract the last two digits of the year
 
-function createJobListing(JobID, UserID, jobTitle, jobDate, jobDescription, profileImgSrc, profileName, totalQuotes) {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure leading zero for single-digit days
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure leading zero for single-digit months
+
+    return `${day}/${month}/${twoDigitYear}`;
+}
+function createJobListing(JobID, UserID, jobTitle, jobDate, jobDescription, profileImgSrc, profileName, totalQuotes, review) {
     // Create the necessary elements
     const jobListing = document.createElement('div');
     jobListing.classList.add('jobListing', 'lightBorder');
@@ -24,7 +33,8 @@ function createJobListing(JobID, UserID, jobTitle, jobDate, jobDescription, prof
             selectedJobs[a].classList.remove("selected")
         }
         jobListing.classList.add("selected")
-        fillJobDetails(jobTitle,`Posted At ${jobDate} By ${profileName}`,jobDescription,totalQuotes)
+        fillJobDetails(jobTitle,`Posted At ${getShortDateFormat(jobDate)} By ${profileName}`,jobDescription,totalQuotes)
+        review ? createReview(review) : null;
     }
 
     const titleSpan = document.createElement('span');
@@ -33,7 +43,7 @@ function createJobListing(JobID, UserID, jobTitle, jobDate, jobDescription, prof
 
     const dateSpan = document.createElement('span');
     dateSpan.classList.add('jobListingDate');
-    dateSpan.textContent = jobDate;
+    dateSpan.textContent = getShortDateFormat(jobDate);
 
     const shortDescP = document.createElement('p');
     shortDescP.classList.add('jobListingShortDesc');

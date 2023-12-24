@@ -1,13 +1,16 @@
-const userID = 'your_user_id_here'; // Replace 'your_user_id_here' with the actual user ID
-
-const requestData = {
-    userID: userID
-};
-
+if(window.pageData.jobs.length > 0){
+    while(jobList.lastElementChild){
+        jobList.lastElementChild.remove()
+    }
+}
 for(let a = 0; a < window.pageData.jobs.length; a++){
-    const {JobID, UserID, Title, Description, Timestamp, FullName, ProfilePicURL, totalQuotes} = window.pageData.jobs[a]
-    console.log(FullName)
-    createJobListing(JobID,UserID,Title,Timestamp.split("T")[0].replace(/20/, ''),Description,ProfilePicURL ? ProfilePicURL : "/assets/pfp.png",FullName, totalQuotes)
+    const {JobID, UserID, Title, Description, Timestamp, FullName, ProfilePicURL, totalQuotes, review} = window.pageData.jobs[a]
+    createJobListing(JobID,UserID,Title,Timestamp,Description,ProfilePicURL ? ProfilePicURL : "/assets/pfp.png",FullName, totalQuotes, review)
+}
+
+if(window.pageData.authData){
+    if(window.pageData.authData.UserID == window.pageData.user.UserID){
+        document.getElementById("profileBtn").onclick = () => {generateDialog("profileSettings2")}
+    }
 }
 jobList.querySelector(".jobListing").click()
-

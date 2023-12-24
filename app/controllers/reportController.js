@@ -6,8 +6,8 @@ const ReportController = {
         try {
             const ReportID = random.nanoid(15);
             const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-            const { ReporterID, ReportType, ReportDetails } = req.body;
+            const ReporterID = req.session.authData ? req.session.authData.UserID : null
+            const { ReportType, ReportDetails } = req.body;
 
             if (!ReporterID || !ReportType || !ReportDetails || !Timestamp) {
                 return res.status(400).json({ message: 'All fields are required' });

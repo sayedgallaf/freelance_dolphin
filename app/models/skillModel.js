@@ -40,21 +40,39 @@ const Skill = {
     },
 
     async addUserSkill(userSkill) {
-        const { UserSkillID, UserID, SkillID } = userSkill;
+        const { UserSkillID, UserID, SkillID, SkillName } = userSkill;
         try {
+            const checkSkillQuery = 'SELECT * FROM Skill WHERE SkillID = ?';
+            const [skillResult] = await db.query(checkSkillQuery, [SkillID]);
+    
+            if (skillResult.length === 0) {
+                // Skill doesn't exist, create it
+                const newSkillID = await this.addSkill({ SkillID, SkillName });
+                userSkill.SkillID = newSkillID;
+            }
+    
             const sql = 'INSERT INTO UserSkill (UserSkillID, UserID, SkillID) VALUES (?, ?, ?)';
-            const [result] = await db.query(sql, [UserSkillID, UserID, SkillID]);
+            const [result] = await db.query(sql, [UserSkillID, UserID, userSkill.SkillID || SkillID]);
             return result.insertId;
         } catch (error) {
             throw new Error(`Error adding user skill: ${error.message}`);
         }
     },
-
+    
     async addJobSkill(jobSkill) {
-        const { JobSkillID, JobID, SkillID } = jobSkill;
+        const { JobSkillID, JobID, SkillID, SkillName } = jobSkill;
         try {
+            const checkSkillQuery = 'SELECT * FROM Skill WHERE SkillID = ?';
+            const [skillResult] = await db.query(checkSkillQuery, [SkillID]);
+    
+            if (skillResult.length === 0) {
+                // Skill doesn't exist, create it
+                const newSkillID = await this.addSkill({ SkillID, SkillName });
+                jobSkill.SkillID = newSkillID;
+            }
+    
             const sql = 'INSERT INTO JobSkill (JobSkillID, JobID, SkillID) VALUES (?, ?, ?)';
-            const [result] = await db.query(sql, [JobSkillID, JobID, SkillID]);
+            const [result] = await db.query(sql, [JobSkillID, JobID, jobSkill.SkillID || SkillID]);
             return result.insertId;
         } catch (error) {
             throw new Error(`Error adding job skill: ${error.message}`);

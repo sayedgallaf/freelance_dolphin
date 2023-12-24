@@ -93,8 +93,8 @@ const Job = {
     async createJob(job) {
         const { JobID, UserID, Title, Description, Timestamp } = job;
         try {
-            const sql = 'INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES (?, ?, ?, ?, ?)';
-            const [result] = await db.query(sql, [JobID, UserID, Title, Description, Timestamp]);
+            const sql = 'INSERT INTO Job (JobID, UserID, Title, Status, Description, Timestamp) VALUES (?, ?, ?, ?, ?, ?)';
+            const [result] = await db.query(sql, [JobID, UserID, Title, "active", Description, Timestamp]);
             return result.insertId;
         } catch (error) {
             throw new Error(`Error creating job: ${error.message}`);
@@ -114,11 +114,14 @@ const Job = {
 
     async deleteJob(JobID) {
         try {
-            const [result] = await db.query('DELETE FROM Job WHERE JobID = ?', [JobID]);
+            const [result] = await db.query('DELETE FROM Job WHERE JobID = ?;', [JobID]);
             return result.affectedRows > 0;
         } catch (error) {
             throw new Error(`Error deleting job: ${error.message}`);
         }
+    },
+    async getUserJobs(){
+        
     }
 };
 

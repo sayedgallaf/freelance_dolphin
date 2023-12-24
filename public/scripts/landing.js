@@ -2,28 +2,28 @@ const FAQElem = document.getElementById("FAQ")
 
 let FAQObj = [
     {
-        question:"How do I get started as a freelancer on this platform?",
-        answer:"Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah "
+        question:"Who can use Freelance Dolphin?",
+        answer:"Freelance Dolphin is available for both employers and freelancers in Bahrain. Employers can post jobs, while freelancers can submit quotes for these jobs."
     },
     {
-        question:"How can I post a job or project on this freelancing platform?",
-        answer:"Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah "
+        question:"How does the job posting process work for employers?",
+        answer:"Employers can post job listings on the platform without specifying the price. Once posted, freelancers can submit quotes for the job. Employers then review these quotes in their discussion board and choose to express interest or disinterest in each quote."
     },
     {
-        question:"How can I ensure the quality and reliability of freelancers on this platform?",
-        answer:"Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah "
+        question:"Is there a cost associated with submitting quotes for jobs?",
+        answer:"Yes, freelancers incur a nominal fee of 100 fils (0.1 BHD) for each quote they submit on a job."
     },
     {
-        question:"How can I negotiate and set my rates with clients?",
-        answer:"Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah "
+        question:"When and how can reviews be posted?",
+        answer:"Reviews can only be created after the job is completed. Both employers and freelancers can post their reviews in the discussion board of the specific job."
     },
     {
-        question:"What measures are in place to protect against fraudulent activities or disputes on this freelancing platform?",
-        answer:"Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah "
+        question:"How are disputes managed on Freelance Dolphin?",
+        answer:"Disputes are handled by our platform administrators and may take up to 24 hours to be resolved. We aim to ensure fair and just resolutions for both parties involved."
     },
     {
-        question:"How can I negotiate and set my rates with clients?",
-        answer:"Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah Blah blah "
+        question:"What payment gateway is used for transactions?",
+        answer:"Payments on Freelance Dolphin are facilitated through the BenefitPay gateway, ensuring secure and efficient transactions."
     }
 ]
 
@@ -60,3 +60,16 @@ const setupFAQ = () => {
 }
 
 setupFAQ()
+
+
+const createJob = () => {
+    if(window.pageData.authData){
+        if(window.pageData.authData.UserType == "employer"){
+            location.href = "/dashboard/jobs?createJob"
+        }else{
+            location.href = "/listings"
+        }
+    }else{
+        generateDialog("login")
+    }
+}

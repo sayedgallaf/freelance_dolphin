@@ -1,0 +1,112 @@
+#dashboardJobView{
+    position: relative;
+    width: min(40vw,750px);
+    height: 95%;
+    padding: 25px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    overflow-y: auto;
+    background-color: white;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1) inset;
+    margin-right: 30px;
+}
+#dashboardJobViewHeader{
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+}
+#dashboardJobViewHeaderInfo{
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    width: 75%;
+}
+#dashboardJobViewHeaderInfoTitle{
+    font-size: 22px;
+    width: 100%;
+    font-weight: bold;
+}
+#dashboardJobViewHeaderInfoSubtitle{
+    font-size: 16px;
+}
+#dashboardJobViewBody{
+    flex: 1;
+    width: 100%;
+}
+#dashboardJobViewBodyText{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 20px;
+}
+#dashboardJobViewBtns{
+    position: sticky;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.dashboardJobViewBtn{
+    background-color: #222830;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    flex: 1;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1400px) {
+    #dashboardJobView{
+        width: 45vw;
+    }
+
+}
+
+@media screen and (max-width: 900px) {
+    #dashboardJobView{
+        width: 90%;
+        padding: 10px;
+        gap: 15px;
+        border-radius: 10px;
+        margin: 0;
+    }
+    #dashboardJobViewHeader{
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    #dashboardJobViewHeaderInfo{
+        display: flex;
+        width: 100%;
+    }
+    #dashboardJobViewHeaderInfoTitle{
+        font-size: 18px;
+/*         text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; */
+    }
+    #dashboardJobViewHeaderInfoSubtitle{
+        font-size: 14px;
+/*         text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; */
+    }
+    #dashboardJobViewBodyText{
+        font-size: 18px;
+    }
+    .dashboardJobViewBtn{
+        font-size: 14px;
+    }
+}

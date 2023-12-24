@@ -1,4 +1,5 @@
 const Job = require('../models/jobModel');
+const Skill = require('../models/skillModel');
 const random = require("nanoid")
 
 const JobController = {
@@ -49,12 +50,49 @@ const JobController = {
 
     async createJob(req, res) {
         try {
-            const jobData = req.body;
+            const UserID = req.session.authData ? req.session.authData.UserID : null
+            const JobID = random.nanoid(15);
+            const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-            jobData.JobID = random.nanoid(15);
-            jobData.Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const {Title, Description, Skills} = req.body;
+            
 
-            const createdJobID = await Job.createJob(jobData);
+            if (!JobID || !UserID || !Title || !Description || !Timestamp) {
+                return res.status(400).json({ message: 'All fields are required' });
+            }
+
+            
+            const newJob = {
+                JobID,
+                UserID,
+                Title,
+                Description,
+                Timestamp
+            };
+            
+            const createdJobID = await Job.createJob(newJob);
+
+            if (Array.isArray(Skills) && Skills.length > 0) {
+                for (const skill of Skills) {
+                    if (!skill.id) {
+                        // If the skill ID is null, it's a new skill
+                        const { value: SkillName } = skill;
+                        await Skill.addJobSkill({
+                            JobSkillID: random.nanoid(15),
+                            JobID: JobID,
+                            SkillID: null, // Assuming SkillID is null for a new skill
+                            SkillName // Add the new SkillName
+                        });
+                    } else {
+                        // If skill ID exists, associate it with the job
+                        await Skill.addJobSkill({
+                            JobSkillID: random.nanoid(15),
+                            JobID: JobID,
+                            SkillID: skill.id
+                        });
+                    }
+                }
+            }
 
             res.status(201).json({ message: 'Job created successfully', JobID: createdJobID });
         } catch (error) {
@@ -81,8 +119,23 @@ const JobController = {
     async deleteJob(req, res) {
         try {
             const { JobID } = req.body;
-            const jobDeleted = await Job.deleteJob(JobID);
+            const job = await Job.getJobByID(JobID);
+            const UserID = req.session.authData ? req.session.authData.UserID : null
 
+            if(!UserID){
+                return res.status(404).json({ message: 'Unauthorized' });
+            }
+
+            if (!job) {
+                return res.status(404).json({ message: 'Job not found' });
+            }
+
+            if(job.UserID != UserID){
+                return res.status(400).json({ message: 'Unauthorized' });
+            }
+
+            const jobDeleted = await Job.deleteJob(JobID);
+            
             if (!jobDeleted) {
                 return res.status(404).json({ message: 'Job not found or could not be deleted' });
             }

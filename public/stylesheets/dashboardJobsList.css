@@ -1,0 +1,116 @@
+#rightBottomHalf{
+    background-color: white;
+}
+#dashboardJobs{
+    height: 95%;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px;
+    box-sizing: border-box;
+    overflow: hidden;
+    overflow-y: auto;
+    flex: 1;
+}
+#dashboardJobsHeader{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#dashboardJobsHeaderTitle{
+    font-size: 32px;
+    font-weight: bold;
+}
+#dashboardJobsHeaderBtns{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+.dashboardJobsHeaderBtn{
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 5px 10px;
+    background-color: white;
+    color: #222830;
+}
+.dashboardJobsHeaderBtn.themedBtn{
+    background-color: #222830;
+    color: white;
+    border: none;
+}
+
+#dashboardJobsBody{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+    flex: 1;
+}   
+.dashboardJob{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    color: #222830;
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.dashboardJob.hide{
+    display: none;
+}
+.dashboardJob.themedBtn{
+    background-color: #222830;
+    color: white;
+}
+.dashboardJob.themedBtn a{
+    color: white;
+}
+.dashboardJobTitle{
+    font-size: 20px;
+    font-weight: bold;
+}
+.dashboardJobUser{
+    font-size: 16px;
+}
+.dashboardJobUser a{
+    text-decoration: underline;
+    color: #222830;
+}
+.dashboardJobTime{
+    font-size: 16px;
+}
+
+
+@media screen and (max-width: 1400px) {
+    #dashboardJobs{
+
+    }
+    #dashboardJobView{
+        width: 45vw;
+    }
+}
+@media screen and (max-width: 900px) {
+    #dashboardJobs{
+        width: 95%;
+    }
+    #dashboardJobView{
+        width: 100%;
+        height: 100%;
+    }
+    #dashboardJobsHeaderBtns{
+        gap: 5px;
+    }
+    .dashboardJobsHeaderBtn{
+        font-size: 16px;
+        border-radius: 5px;
+        padding: 5px 5px;
+    }
+}

@@ -25,7 +25,8 @@ const bcrypt = require("bcrypt");
           UserID VARCHAR(20) NOT NULL,
           Title VARCHAR(100),
           Description VARCHAR(5000),
-          Timestamp DATE,
+          Status VARCHAR(20),
+          Timestamp DATETIME,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -48,7 +49,7 @@ const bcrypt = require("bcrypt");
           TransactionType VARCHAR(50),
           Description VARCHAR(500),
           Amount FLOAT,
-          Timestamp DATE,
+          Timestamp DATETIME,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -58,16 +59,17 @@ const bcrypt = require("bcrypt");
           UserID VARCHAR(20) NOT NULL,
           QuoteAmount FLOAT,
           QuoteMessage VARCHAR(500),
-          Timestamp DATE,
-          FOREIGN KEY (JobID) REFERENCES Job(JobID),
+          Timestamp DATETIME,
+          FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
         `CREATE TABLE Discussion (
             DiscussionID VARCHAR(20) PRIMARY KEY,
             JobID VARCHAR(20) NOT NULL,
+            Timestamp DATETIME,
             Status VARCHAR(50),
-            FOREIGN KEY (JobID) REFERENCES Job(JobID)
+            FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE
         );`,
 
         `CREATE TABLE Message (
@@ -75,7 +77,7 @@ const bcrypt = require("bcrypt");
           DiscussionID VARCHAR(20) NOT NULL,
           UserID VARCHAR(20) NOT NULL,
           MessageContent VARCHAR(1000),
-          Timestamp DATE,
+          Timestamp DATETIME,
           FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID),
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
@@ -95,7 +97,7 @@ const bcrypt = require("bcrypt");
           MediaType VARCHAR(50),
           MediaURL VARCHAR(50),
           Description VARCHAR(500),
-          Timestamp DATE,
+          Timestamp DATETIME,
           FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID),
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
@@ -107,7 +109,7 @@ const bcrypt = require("bcrypt");
           Description VARCHAR(1000),
           Status VARCHAR(50),
           ResolutionDetails VARCHAR(500),
-          FOREIGN KEY (JobID) REFERENCES Job(JobID),
+          FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -116,7 +118,7 @@ const bcrypt = require("bcrypt");
           ReporterID VARCHAR(20) NOT NULL,
           ReportType VARCHAR(50),
           ReportDetails VARCHAR(500),
-          Timestamp DATE,
+          Timestamp DATETIME,
           FOREIGN KEY (ReporterID) REFERENCES User(UserID)
         );`,
 
@@ -126,8 +128,8 @@ const bcrypt = require("bcrypt");
           ReviewerID VARCHAR(20) NOT NULL,
           Rating FLOAT,
           Comment VARCHAR(500),
-          Timestamp DATE,
-          FOREIGN KEY (JobID) REFERENCES Job(JobID),
+          Timestamp DATETIME,
+          FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
           FOREIGN KEY (ReviewerID) REFERENCES User(UserID)
         );`,
 
@@ -137,7 +139,7 @@ const bcrypt = require("bcrypt");
           ContactMethod VARCHAR(50),
           ContactDetails VARCHAR(500),
           Message VARCHAR(500),
-          Timestamp DATE,
+          Timestamp DATETIME,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -145,15 +147,15 @@ const bcrypt = require("bcrypt");
           JobSkillID VARCHAR(20) PRIMARY KEY,
           JobID VARCHAR(20) NOT NULL,
           SkillID VARCHAR(20) NOT NULL,
-          FOREIGN KEY (JobID) REFERENCES Job(JobID),
+          FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
           FOREIGN KEY (SkillID) REFERENCES Skill(SkillID)
         );`,
 
         `CREATE TABLE BannedUser (
             BannedUserID VARCHAR(20) PRIMARY KEY,
             UserID VARCHAR(20) NOT NULL,
-            Timestamp DATE,
-            bannedUntil DATE,
+            Timestamp DATETIME,
+            bannedUntil DATETIME,
             FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
         `CREATE TABLE Escrow (
@@ -161,10 +163,23 @@ const bcrypt = require("bcrypt");
           JobID VARCHAR(20) NOT NULL,
           UserID VARCHAR(20) NOT NULL,
           Amount DECIMAL(15, 2),
-          Timestamp DATE,
-          FOREIGN KEY (JobID) REFERENCES Job(JobID),
+          Timestamp DATETIME,
+          FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
-      );`
+      );`,
+      `CREATE TABLE Contract (
+        ContractID VARCHAR(20) PRIMARY KEY,
+        EscrowID VARCHAR(20),
+        JobID VARCHAR(20),
+        FreelancerID VARCHAR(20),
+        EmployerID VARCHAR(20),
+        Deadline DATETIME,
+        Timestamp DATETIME,
+        FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
+        FOREIGN KEY (FreelancerID) REFERENCES User(UserID),
+        FOREIGN KEY (EmployerID) REFERENCES User(UserID),
+        FOREIGN KEY (EscrowID) REFERENCES Escrow(EscrowID)
+      );`,
 
 /*         `ALTER TABLE User
           ADD FOREIGN KEY (UserID) REFERENCES Job(UserID),
@@ -261,16 +276,16 @@ If you're passionate about utilizing your skills to create impactful solutions a
 
 Spectrum Solutions Ltd. is an equal opportunity employer committed to fostering diversity and creating an inclusive workplace for all employees.`
     const jobInserts = [
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job1', '123123123', 'Full Stack Developer', ?, '2023-01-15')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job2', '123123123', 'Data Analyst', ?, '2023-02-20')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job3', '123123123', 'Marketing Manager', ?, '2023-03-10')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job4', '123123123', 'Software Engineer', ?, '2023-04-05')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job5', '123123123', 'Financial Analyst', ?, '2023-05-18')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job6', '123123123', 'UI/UX Designer', ?, '2023-06-22')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job7', '123123123', 'Product Manager', ?, '2023-07-30')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job8', '123123123', 'Human Resources Specialist', ?, '2023-08-12')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job9', '123123123', 'Systems Administrator', ?, '2023-09-25')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Timestamp) VALUES ('job10', '123123123', 'Content Writer', ?, '2023-10-14')"
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job1', '123123123', 'Full Stack Developer', ?, 'active', '2023-01-15')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job2', '123123123', 'Data Analyst', ?, 'active', '2023-02-20')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job3', '123123123', 'Marketing Manager', ?, 'archived', '2023-03-10')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job4', '123123123', 'Software Engineer', ?, 'active', '2023-04-05')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job5', '123123123', 'Financial Analyst', ?, 'archived', '2023-05-18')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job6', '123123123', 'UI/UX Designer', ?, 'active', '2023-06-22')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job7', '123123123', 'Product Manager', ?, 'archived', '2023-07-30')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job8', '123123123', 'Human Resources Specialist', ?, 'active', '2023-08-12')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job9', '123123123', 'Systems Administrator', ?, 'active', '2023-09-25')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job10', '123123123', 'Content Writer', ?, 'archived', '2023-10-14')"
     ];
 const skillInserts = [`INSERT INTO Skill (SkillID, SkillName) VALUES ('1001', 'Web Development');`,
 `INSERT INTO Skill (SkillID, SkillName) VALUES ('1002', 'Graphic Design');`,
@@ -300,6 +315,38 @@ const UserSkillInserts = [
   "INSERT INTO UserSkill (UserSkillID, UserID, SkillID) VALUES ('123123123_skill1', '123123123', '1001');",
   "INSERT INTO UserSkill (UserSkillID, UserID, SkillID) VALUES ('123123123_skill2', '123123123', '1004');"
 ];
+
+const escrowSQLStatements = [
+  `INSERT INTO Escrow (EscrowID, JobID, UserID, Amount, Timestamp)
+  VALUES ('escrow1', 'job1', '123123123', 1500.00, '2023-10-05');`,
+  `INSERT INTO Escrow (EscrowID, JobID, UserID, Amount, Timestamp)
+  VALUES ('escrow2', 'job2', '123123123', 2000.00, '2023-09-20');`,
+  `INSERT INTO Escrow (EscrowID, JobID, UserID, Amount, Timestamp)
+  VALUES ('escrow3', 'job3', '123123123', 1800.00, '2023-08-15');`
+];
+
+const contractSQLStatements = [
+  `INSERT INTO Contract (ContractID, EscrowID, JobID, FreelancerID, EmployerID, Deadline, Timestamp)
+  VALUES ('contract1', 'escrow1', 'job1', '123123124', '123123123', '2023-12-30', '2023-10-01');`,
+  
+  `INSERT INTO Contract (ContractID, EscrowID, JobID, FreelancerID, EmployerID, Deadline, Timestamp)
+  VALUES ('contract2', 'escrow2', 'job2', '123123124', '123123123', '2023-12-25', '2023-09-15');`,
+  
+  `INSERT INTO Contract (ContractID, EscrowID, JobID, FreelancerID, EmployerID, Deadline, Timestamp)
+  VALUES ('contract3', 'escrow3', 'job3', '123123124', '123123123', '2023-12-20', '2023-08-28');`
+];
+
+const fakeReviewsSQL = [
+  `INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) 
+  VALUES ('review1_job1', 'job3', '123123124', 4.5, 'Great work!', '2023-12-15')`,
+  
+  `INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) 
+  VALUES ('review1_job2', 'job5', '123123124', 3.8, 'Satisfactory work.', '2023-12-17')`,
+  
+  `INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) 
+  VALUES ('review1_job4', 'job7', '123123124', 4.7, 'Exceeded expectations!', '2023-12-19')`
+];
+
 
     for(let a =0; a < sqlStatements.length; a++){
       await db.query(sqlStatements[a]);
@@ -331,6 +378,18 @@ const UserSkillInserts = [
     }
     for(let a =0; a < UserSkillInserts.length; a++){
       await db.query(UserSkillInserts[a]);
+    }
+    
+    for(let a =0; a < escrowSQLStatements.length; a++){
+      await db.query(escrowSQLStatements[a]);
+    }
+
+    for(let a =0; a < contractSQLStatements.length; a++){
+      await db.query(contractSQLStatements[a]);
+    }
+
+    for(let a =0; a < fakeReviewsSQL.length; a++){
+      await db.query(fakeReviewsSQL[a]);
     }
 
     console.log(await db.query('SHOW TABLES'))

@@ -1,5 +1,4 @@
 const db = require('../config/db');
-
 const Quote = {
     async createQuote(quote) {
         const { QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp } = quote;
@@ -76,6 +75,14 @@ const Quote = {
             return rows;
         } catch (error) {
             throw new Error(`Error fetching all quotes: ${error.message}`);
+        }
+    },
+    async getAllQuotesByUserId(userID) {
+        try {
+            const [rows] = await db.query('SELECT * FROM Quote WHERE UserID = ?', [userID]);
+            return rows;
+        } catch (error) {
+            throw new Error(`Error fetching quotes by user ID: ${error.message}`);
         }
     }
 

@@ -1,3 +1,4 @@
+
 let allDialogs = {
     all: [
         { content: 'Account Type', type: 'label' },
@@ -63,7 +64,6 @@ let allDialogs = {
     quote: [
         { content: 'Quote', type: 'label' },
         { type: 'val', name: 'JobID',value:(() => {return selectedJob.JobID}) },
-        { type: 'val', name: 'UserID', value:(() => {return window.pageData.authData.UserID}) },
         { type: 'input', inputType: 'text', name: 'QuoteAmount' },
         { content: 'Message', type: 'label' },
         { type: 'textarea', name: 'QuoteMessage' },
@@ -71,14 +71,12 @@ let allDialogs = {
     ],
     reportJob: [
         { type: 'val', name: 'ReportType',value:(() => {return "JobID: "+selectedJob.JobID}) },
-        { type: 'val', name: 'ReporterID', value:(() => {return window.pageData.authData ? window.pageData.authData.UserID : null}) },
         { content: 'Report', type: 'label' },
         { type: 'textarea', name: 'ReportDetails' },
         { type: 'button', content: 'Submit', endpointURL: '/createReport', endpointSuccess:() => {dialogDiv.style.display = "none"} }
     ],
     reportUser: [
         { type: 'val', name: 'ReportType',value:(() => {return "UserID: "+window.pageData.user.UserID}) },
-        { type: 'val', name: 'ReporterID', value:(() => {return window.pageData.authData ? window.pageData.authData.UserID : null}) },
         { content: 'Report', type: 'label' },
         { type: 'textarea', name: 'ReportDetails' },
         { type: 'button', content: 'Submit', endpointURL: '/createReport', endpointSuccess:() => {dialogDiv.style.display = "none"} }
@@ -88,6 +86,49 @@ let allDialogs = {
     ],
     profileSettings: [
         { type: 'functionButton', content: 'Report User', onclick:() => {generateDialog("reportUser")} }
+    ],
+    profileSettings2: [
+        { type: 'functionButton', content: 'Change Full Name', onclick:() => {generateDialog("profileFullName")} },
+        { type: 'functionButton', content: 'Edit Bio', onclick:() => {generateDialog("profileBio")} },
+        { type: 'functionButton', content: 'Edit Skills', onclick:() => {generateDialog("profileSkills")} },
+        { type: 'functionButton', content: 'Change Password', onclick:() => {generateDialog("changePassword")} }
+    ],
+    profileFullName:[
+        { content: 'Full Name', type: 'label' },
+        { type: 'val', name: 'type',value:(() => {return "FullName"}) },
+        { type: 'input', inputType: 'text', name: 'value', value:() => {return window.pageData.authData.FullName} },
+        { type: 'button', content: 'Update', endpointURL: '/updateProfile?type=FullName', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+
+    ],
+    profileBio:[
+        { content: 'New Bio', type: 'label' },
+        { type: 'val', name: 'type',value:(() => {return "Bio"}) },
+        { type: 'textarea', name: 'value', value:() => {return window.pageData.authData.Bio}},
+        { type: 'button', content: 'Update', endpointURL: '/updateProfile?type=Bio', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    profileSkills:[
+
+    ],
+    createJob: [
+        { content: 'Job Title', type: 'label' },
+        { type: 'input', inputType: 'text', name: 'Title' },
+        { content: 'Job Description', type: 'label' },
+        { type: 'textarea', name: 'Description' },
+        { content: 'Skills', type: 'label' },
+        { type: 'tagify', name: 'Skills', values:() => {return window.pageData.skills.map(skill => {return {value:skill.SkillName,id:skill.SkillID}}) }},
+        { type: 'button', content: 'Publish', endpointURL: '/createJob', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    deleteJob: [
+        { content: 'Are you sure you want to delete this job listing?', type: 'label' },
+        { type: 'val', name: 'JobID',value:(() => {return selectedJob.JobID}) },
+        { type: 'button', content: 'Delete', endpointURL: '/deleteJob', endpointSuccess:() => {dialogDiv.style.display = "none"} }
+    ],
+    deposit:[
+        { content: 'Payment Method', type: 'label' },
+        { type: 'multipleChoice', name: 'paymentMethod', choices: [{ label: "PayPal", value: "paypal" }, { label: "BenefitPay", value: "benefitpay" }] },
+        { content: 'Amount', type: 'label' },
+        { type: 'input', inputType:"number", name: 'amount' },
+        { type: 'button', content: 'Deposit', endpointURL: '/depositBalance', endpointSuccess:() => {dialogDiv.style.display = "none"} } 
     ]
 }
 const dialogDiv = document.getElementById('dialogDiv');
@@ -101,6 +142,9 @@ function generateDialog(dialogName) {
     let dialog = allDialogs[dialogName]
     const form = document.getElementById('dynamicForm');
     while (form.lastElementChild) {
+        if(form.lastElementChild.tagify){
+            form.lastElementChild.tagify.destroy()
+        }
         form.lastElementChild.remove()
     }
     const formData = {}; // Object to store form data
@@ -135,6 +179,10 @@ function generateDialog(dialogName) {
                 newElement.setAttribute('placeholder', element.placeholder || '');
                 newElement.classList.add('dialogInput');
                 newElement.classList.add('lightBorder');
+                if(element.value){
+                    newElement.value = element.value()
+                    formData[element.name] = newElement.value
+                }
                 newElement.addEventListener('input', function () {
                     formData[element.name] = newElement.value; // Update formData on input change
                 });
@@ -148,10 +196,29 @@ function generateDialog(dialogName) {
                 newElement.setAttribute('name', element.name || '');
                 newElement.classList.add('dialogTextArea');
                 newElement.classList.add('lightBorder');
+                if(element.value){
+                    newElement.value = element.value()
+                    formData[element.name] = newElement.value
+                }
                 newElement.addEventListener('input', function () {
                     formData[element.name] = newElement.value; // Update formData on textarea change
                 });
                 break;
+
+                case 'tagify':
+                    newElement = document.createElement('textarea');
+                    newElement.setAttribute('name', element.name || '');
+                    newElement.classList.add("tagify")
+                    newElement.classList.add('lightBorder');
+                    if(element.value){
+                        newElement.value = element.value()
+                        formData[element.name] = newElement.value
+                    }
+                    newElement.addEventListener('input', function () {
+                        formData[element.name] = newElement.value; // Update formData on textarea change
+                        console.log(formData)
+                    });
+                    break;
 
             case 'button':
                 newElement = document.createElement('button');
@@ -169,7 +236,6 @@ function generateDialog(dialogName) {
                 newElement.setAttribute('type', 'button'); // Change type to 'button'
                 newElement.textContent = element.content || 'Submit';
                 newElement.classList.add('dialogBtn');
-                newElement.classList.add('themedBtn');
                 newElement.onclick = element.onclick
                 break;
 
@@ -205,6 +271,33 @@ function generateDialog(dialogName) {
                 newElement.className += ` ${element.className}`;
             }
             form.appendChild(newElement);
+            if(element.type == "tagify"){
+                try {
+                    const tagify = new Tagify(newElement, {
+                        enforceWhitelist: false,
+                        delimiters: null,
+                        whitelist: element.values(),
+                        maxTags: 10,
+                        dropdown: {
+                          maxItems: 20,          
+                          classname: "tags-look",
+                          enabled: 0,            
+                          closeOnSelect: false   
+                        }
+                    });
+                    tagify.on("add", () => {
+                        formData[element.name] = tagify.value.map(skill => {return {id:skill.id, value:skill.value}});
+                        console.log(formData)
+                    })
+                    tagify.on("remove", () => {
+                        formData[element.name] = tagify.value.map(skill => {return {id:skill.id, value:skill.value}});
+                        console.log(formData)
+                    })
+                    newElement.tagify = tagify
+                } catch (error) {
+                    
+                }
+            }
         }
     });
     dialogDiv.style.display = "flex"

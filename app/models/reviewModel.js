@@ -18,6 +18,18 @@ const Review = {
             throw new Error(`Error fetching review: ${error.message}`);
         }
     },
+    async getReviewByJobID(jobID) {
+        try {
+            const sql = `SELECT Review.*, User.UserID, User.FullName, User.Email, User.UserType, User.ProfilePicURL
+            FROM Review
+            INNER JOIN User ON Review.ReviewerID = User.UserID
+            WHERE Review.JobID = ?`;
+            const [rows] = await db.query(sql, [jobID]);
+            return rows;
+        } catch (error) {
+            throw new Error(`Error fetching reviews by JobID: ${error.message}`);
+        }
+    },
 
     async addReview(review) {
         const { ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp } = review;

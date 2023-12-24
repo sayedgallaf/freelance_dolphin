@@ -1,17 +1,19 @@
 <div id="sideHeader">
     <div id="sideHeaderTop">
-        <img src="/assets/logo2.svg">
+        <a href="/"><img src="/assets/logo2.svg"></a>
     </div>
     <div id="sideHeaderCenter">
         <% data.sidePanelURLs.forEach((item) => { %>
             <a href="<%= item.href %>" class="sideHeaderURL"><%= item.title %></a>
         <% }); %>
         <% if (data.authData.UserType === "employer") { %>
-            <button class="sideHeaderBtn">Create Job</button>
+            <button class="sideHeaderBtn" onclick="generateDialog('createJob')">Create Job</button>
         <% } %>
+        <button class="sideHeaderBtn" onclick="generateDialog('deposit')">Deposit</button>
+        <span id="balanceValue">Balance: <%= data.authData.Balance %>BHD</span>
     </div>
     <div id="sideHeaderBottom">
-        <button class="sideHeaderBtn">Logout</button>
+        <a href="/logout" class="sideHeaderBtn">Logout</a>
         <span id="emailAddress"><%= data.authData.Email %></span>
     </div>
 </div>

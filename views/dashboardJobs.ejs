@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="/stylesheets/general.css">
     <link rel="stylesheet" href="/stylesheets/dialog.css">
     <link rel="stylesheet" href="/stylesheets/dashboard.css">
+    <link rel="stylesheet" href="/stylesheets/sideHeader.css">
+    <link rel="stylesheet" href="/stylesheets/dashboardJobsList.css">
+    <link rel="stylesheet" href="/stylesheets/dashboardJobsView.css">
 </head>
 <body>
     <div id="content">
@@ -19,11 +22,13 @@
             </div>
 
             <div id="centerBottomHalf">
-                
+                <%- include('partials/dashboardJobsList.ejs') %>
+
             </div>
 
             <div id="rightBottomHalf">
                 <button id="rightBottomHalfDrawer" class="responsiveDrawer lightBorder">&lsaquo;</button>
+                <%- include('partials/dashboardJobsView.ejs') %>
             </div>
             
         </div>
@@ -38,5 +43,7 @@
     <script src="/scripts/dialog.js"></script>
     <script src="/scripts/responsive.js"></script>
     <script src="/scripts/loggedIn.js"></script>
+    <script src="/scripts/dashboardJobsList.js"></script>
+    <script src="/scripts/dashboardJobsView.js"></script>
 </body>
 </html>

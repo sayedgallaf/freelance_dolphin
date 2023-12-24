@@ -1,6 +1,6 @@
 const selectedSkills = [];
 let pageNumber = 1;
-let resetListings = false;
+let resetListings = true;
 const applyFilterBtn = document.getElementById("applyFilterBtn")
 const searchBtn = document.getElementById("searchBtn")
 const loadMoreBtn = document.getElementById("loadMoreBtn")
@@ -63,7 +63,7 @@ async function searchJobs() {
         }
         for(let a =0; a < jobs.length; a++){
             const {JobID, UserID, Title, Description, Timestamp, FullName, ProfilePicURL, totalQuotes} = jobs[a]
-            createJobListing(JobID,UserID,Title,Timestamp.split("T")[0].replace(/20/, ''),Description,ProfilePicURL ? ProfilePicURL : "assets/pfp.png",FullName, totalQuotes)
+            createJobListing(JobID,UserID,Title,Timestamp,Description,ProfilePicURL ? ProfilePicURL : "assets/pfp.png",FullName, totalQuotes, null)
         }
         jobList.appendChild(loadMoreBtn)
         jobList.firstElementChild.click()

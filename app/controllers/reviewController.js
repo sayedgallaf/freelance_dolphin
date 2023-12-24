@@ -61,6 +61,20 @@ const ReviewController = {
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
         }
+    },
+    async getReviewByJobID(req, res) {
+        try {
+            const { JobID } = req.body;
+            const reviews = await Review.getReviewByJobID(JobID);
+
+            if (!reviews || reviews.length === 0) {
+                return res.status(404).json({ message: 'No reviews found for the specified JobID' });
+            }
+            
+            res.status(200).json({ reviews });
+        } catch (error) {
+            res.status(500).json({ message: `Error: ${error.message}` });
+        }
     }
 };
 

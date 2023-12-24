@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="/stylesheets/general.css">
+    <link rel="stylesheet" href="/stylesheets/sideHeader.css">
+    <link rel="stylesheet" href="/stylesheets/dialog.css">
+    <link rel="stylesheet" href="/stylesheets/discussion.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="content">
+        <div id="bottomHalf">
+
+            <div id="leftBottomHalf">
+                <button id="leftBottomHalfDrawer" class="responsiveDrawer lightBorder">&rsaquo;</button>
+                <%- include('partials/sideHeader.ejs') %>
+            </div>
+
+            <div id="centerBottomHalf">
+                <div id="discussionPanel">
+                    <div id="discussionPanelHeader">
+                        <button class="discussionPanelHeaderBtn lightBorder selected">All</button>
+                        <button class="discussionPanelHeaderBtn lightBorder">Quotes</button>
+                        <button class="discussionPanelHeaderBtn lightBorder">Messages</button>
+                        <button class="discussionPanelHeaderBtn lightBorder">Disputes</button>
+                    </div>
+                    <div id="discussions">
+                        <div class="discussion lightBorder">
+                            <span class="discussionTitle">Quote: Graphic Designer for Website Redesign</span>
+                            <span class="discussionInfo">Quoted At: 3:30 PM, 05/11/23</span>
+                            <button class="discussionSettings"><img src="/assets/dots.svg"></button>
+                        </div>
+                        <div class="discussion lightBorder">
+                            <span class="discussionTitle">Quote: Graphic Designer for Website Redesign</span>
+                            <span class="discussionInfo">Quoted At: 3:30 PM, 05/11/23</span>
+                            <button class="discussionSettings"><img src="/assets/dots.svg"></button>
+                        </div>
+                        <div class="discussion lightBorder">
+                            <span class="discussionTitle">Quote: Graphic Designer for Website Redesign</span>
+                            <span class="discussionInfo">Quoted At: 3:30 PM, 05/11/23</span>
+                            <button class="discussionSettings"><img src="/assets/dots.svg"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rightBottomHalf">
+                <button id="rightBottomHalfDrawer" class="responsiveDrawer lightBorder">&lsaquo;</button>
+                <div id="discussionBoard">
+                    <span id="discussionBoardTitle">Discussion: Graphic Designer for Website Redesign.</span>
+                    <div id="dicussionMessages">
+                        <div class="message">
+                            <span class="messageBy">Ali:</span>
+                            <span class="messageContent">Hey</span>
+                        </div>
+                    </div>
+                    <div id="discussionActions">
+                        <div id="discussionInput" class="lightBorder">
+                            <input type="text" placeholder="message" id="messageInput">
+                            <button id="sendMessageBtn">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <%- include('partials/dialog.ejs') %>
+
+    <script>
+        window.pageData = <%- JSON.stringify(data) %>;
+    </script>
+
+    <!-- scripts -->
+    <script src="/scripts/dialog.js"></script>
+    <script src="/scripts/responsive.js"></script>
+    <script src="/scripts/loggedIn.js"></script>
+    <!-- <script src="/scripts/socket.io.min.js"></script> -->
+    <script src="/scripts/discussion.js"></script>
+    
+</body>
+</html>

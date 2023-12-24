@@ -44,18 +44,52 @@ const User = {
     
 
     async createUser(user) {
-        const { UserID, UserType, FullName, Email, Password, Bio } = user;
+        const { UserID, UserType, FullName, Email, Password, Bio, Balance } = user;
         try {
             const hashedPassword = await bcrypt.hash(Password, 10); // Hashing the password
 
-            const sql = 'INSERT INTO User (UserID, UserType, FullName, Email, Password, Bio) VALUES (?, ?, ?, ?, ?, ?)';
-            const [result] = await db.query(sql, [UserID, UserType, FullName, Email, hashedPassword, Bio]);
+            const sql = 'INSERT INTO User (UserID, UserType, FullName, Email, Password, Balance, Bio) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const [result] = await db.query(sql, [UserID, UserType, FullName, Email, hashedPassword, Balance, Bio]);
 
             return result.insertId; // Return the ID of the newly created user
         } catch (error) {
             throw new Error(`Error creating user: ${error.message}`);
         }
     },
+    async spendBalance(userId, amount) {
+        try {
+            const [userRow] = await db.query('SELECT Balance FROM User WHERE UserID = ?', [userId]);
+
+            if (userRow.length === 0) {
+                throw new Error('User not found');
+            }
+
+            const userBalance = userRow[0].Balance;
+
+            if (userBalance < amount) {
+                throw new Error('Insufficient balance');
+            }
+
+            const updatedBalance = userBalance - amount;
+
+            const updateResult = await db.query('UPDATE User SET Balance = ? WHERE UserID = ?', [updatedBalance, userId]);
+
+            return updateResult[0].affectedRows > 0;
+        } catch (error) {
+            throw new Error(`Error spending balance: ${error.message}`);
+        }
+    },
+    async increaseBalance(userId, amount) {
+        try {
+            // Increment the balance by the specified amount
+            const updateResult = await db.query('UPDATE User SET Balance = Balance + ? WHERE UserID = ?', [amount, userId]);
+    
+            return updateResult[0].affectedRows > 0;
+        } catch (error) {
+            throw new Error(`Error increasing balance: ${error.message}`);
+        }
+    },
+    
 
     async comparePasswords(plainPassword, hashedPassword) {
         try {

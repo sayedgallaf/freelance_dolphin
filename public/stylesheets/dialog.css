@@ -2,7 +2,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 99999;
+    z-index: 3;
     background-color: rgba(34,40,48,0.8);
     width: 100%;
     height: 100%;
@@ -43,6 +43,9 @@
     font-size: 28px;
     font-weight: bold;
     border-radius: 10px;
+    background-color: #222830;
+    color: white;
+    cursor: pointer;
 }
 .choicesDiv{
     display: flex;
@@ -75,6 +78,9 @@
 .dialogDesc{
     margin-top: -20px;
     font-size: 16px;
+}
+.tagify__dropdown{
+    z-index: 3;
 }
 
 @media screen and (max-width: 900px) {
