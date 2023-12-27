@@ -64,7 +64,7 @@ const User = {
 
             const userBalance = userRow[0].Balance;
 
-            if (userBalance < amount) {
+            if (Number(userBalance) < amount) {
                 throw new Error('Insufficient balance');
             }
 

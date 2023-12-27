@@ -67,7 +67,7 @@ const QuoteController = {
             }
 
             // Check if user has enough balance to create the quote
-            if (user.Balance < quoteCost) {
+            if (Number(user.Balance) < quoteCost) {
                 return res.status(403).json({ message: 'Insufficient balance to create the quote' });
             }
 
