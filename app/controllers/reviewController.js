@@ -19,14 +19,30 @@ const ReviewController = {
 
     async addReview(req, res) {
         try {
-            const reviewData = req.body;
+            const { JobID, ReviewedID, Rating, Comment } = req.body;
 
-            reviewData.ReviewID = random.nanoid(15);
-            reviewData.Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const ReviewID = random.nanoid(15);
+            const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const ReviewerID = req.session.authData ? req.session.authData.UserID : null
+            if(!JobID || !ReviewedID || !Rating || !Comment){
+                return res.status(400).json({ message: 'All fields are required' });
+            }
+            if(Rating > 5){
+                return res.status(400).json({ message: 'Rating must be 5 or less' });
 
-            const createdReviewID = await Review.addReview(reviewData);
+            }
+            const review = {
+                ReviewID,
+                Timestamp,
+                ReviewerID,
+                ReviewedID,
+                JobID,
+                Rating,
+                Comment
+            }
+            await Review.addReview(review);
 
-            res.status(201).json({ message: 'Review added successfully', ReviewID: createdReviewID });
+            res.status(201).json({ message: 'Review added successfully'});
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
         }
@@ -64,8 +80,8 @@ const ReviewController = {
     },
     async getReviewByJobID(req, res) {
         try {
-            const { JobID } = req.body;
-            const reviews = await Review.getReviewByJobID(JobID);
+            const { JobID, UserID } = req.body;
+            const reviews = await Review.getReviewByJobID(JobID,UserID);
 
             if (!reviews || reviews.length === 0) {
                 return res.status(404).json({ message: 'No reviews found for the specified JobID' });

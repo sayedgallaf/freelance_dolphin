@@ -1,80 +1,343 @@
-const socket = io('http://localhost:3000');
+const dicussionMessages = document.getElementById('dicussionMessages');
+const messageInput = document.getElementById("messageInput")
+const actionBtns = {
+    cancelNegotiationsBtn: document.getElementById("cancelNegotiationsBtn"),
+    createContractBtn: document.getElementById("createContractBtn"),
+    finishJobBtn: document.getElementById("finishJobBtn"),
+    createDisputeBtn: document.getElementById("createDisputeBtn"),
+    createReviewBtn: document.getElementById("createReviewBtn")
+}
 
-socket.on('message', (message) => {
-    createMessageElement(message.by,message.content)
-});
+const showActionBtns = (chosenActionBtns = []) => {
+    for (let actionBtn in actionBtns) {
+        actionBtns[actionBtn].style.display = "none"
+    }
+    for (let a = 0; a < chosenActionBtns.length; a++) {
+        if (actionBtns[chosenActionBtns[a]]) {
+            actionBtns[chosenActionBtns[a]].style.display = "block"
+        }
+    }
+}
+const socket = io('http://localhost:3000');
 
 let selectedDiscussion = {}
 
-const sendMessage = (message) => {
-    socket.emit("message", {room:selectedDiscussion.discussionID, by:window.pageData.authData, content:message})
-}
+function getShortDateFormat(date) {
+    date = new Date(date);
+    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    const twoDigitYear = date.getFullYear().toString().slice(-2); // Extract the last two digits of the year
 
-const messageInput = document.getElementById("messageInput")
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure leading zero for single-digit days
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure leading zero for single-digit months
+
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0'); // Ensure leading zero for single-digit minutes
+
+    // Convert hours to 12-hour format and determine AM/PM
+    const amOrPm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // Adjust hours to 12-hour format
+
+    return `${day}/${month}/${twoDigitYear} ${hours}:${minutes} ${amOrPm}`;
+}
+const createMessage = (message) => {
+    const data = {
+        DiscussionID: selectedDiscussion.DiscussionID,
+        UserID: window.pageData.authData.UserID,
+        MessageContent: message
+    };
+
+    fetch('/createMessage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            // Handle response from the server if needed
+            console.log('Message sent successfully');
+        })
+        .catch(error => {
+            // Handle error if the message fails to send
+            console.error('Error sending message:', error);
+        });
+};
+
+const sendMessage = () => {
+    const message = messageInput.value
+    if (!message) {
+        return;
+    }
+    if (!selectedDiscussion.DiscussionID) {
+        return;
+    }
+    socket.emit("message", {
+        room: selectedDiscussion.DiscussionID,
+        by: window.pageData.authData.FullName,
+        content: message
+    });
+    createMessage(message)
+    messageInput.value = ""
+};
+
 
 window.addEventListener("keydown", (e) => {
-    if(e.key == "Enter"){
-        sendMessage(messageInput.value)
+    if (e.key == "Enter") {
+        sendMessage()
     }
 })
 
-function createDiscussionElement(discussion, job) {
+function createDiscussionElement(discussion) {
     // Create the div element
     const discussionDiv = document.createElement('div');
     discussionDiv.classList.add('discussion', 'lightBorder');
+    discussionDiv.discussion = discussion
+    discussionDiv.onclick = () => {
+        fetch("/getDiscussion", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ DiscussionID: discussion.DiscussionID })
+        })
+            .then(response => response.json())
+            .then(discussionData => {
+
+                if (discussion.DiscussionStatus == "Quote") {
+                    generateQuote(discussionData, discussion)
+                    showActionBtns()
+                } else {
+                    while (dicussionMessages.lastElementChild) {
+                        dicussionMessages.lastElementChild.remove()
+                    }
+                    for (let a = 0; a < discussionData.length; a++) {
+                        if(discussionData[a].MessageID){
+                            createMessageElement(discussionData[a].FullName, discussionData[a].MessageContent)
+                        }else if(discussionData[a].MediaID){
+                            createMessageElement(discussionData[a].FullName, discussionData[a].MediaURL,true)
+                        }
+                        
+                    }
+                    if (discussion.DiscussionStatus == "Negotiation") {
+                        if (window.pageData.authData.UserType != "freelancer") {
+                            showActionBtns(["cancelNegotiationsBtn", "createContractBtn"])
+                        } else {
+                            showActionBtns(["cancelNegotiationsBtn"])
+                        }
+                    } else if (discussion.DiscussionStatus == "Hired") {
+                        if (window.pageData.authData.UserType != "freelancer") {
+                            showActionBtns(["finishJobBtn", "createDisputeBtn"])
+                        } else {
+                            showActionBtns(["createDisputeBtn"])
+                        }
+                    } else if (discussion.DiscussionStatus == "Archived") {
+                        showActionBtns(["createReviewBtn"])
+                    }else{
+                        showActionBtns()
+                    }
+                }
+            })
+            .catch(error => console.error('Fetch error:', error));
+        document.getElementById("discussionBoardTitle").innerText = "Discussion: " + discussion.JobTitle
+        let prevSelected = document.querySelector(".discussion.themedBtn")
+        if (prevSelected) {
+            prevSelected.classList.remove("themedBtn")
+        }
+        discussionDiv.classList.add("themedBtn")
+        selectedDiscussion = discussion
+        socket.emit("joinRoom", discussion.DiscussionID)
+    }
 
     // Create and append the span elements
     const discussionTitleSpan = document.createElement('span');
     discussionTitleSpan.classList.add('discussionTitle');
-    discussionTitleSpan.textContent = `${discussion.Status}: ${job.Title}`;
+    discussionTitleSpan.textContent = `${discussion.DiscussionStatus}: ${discussion.JobTitle}`;
     discussionDiv.appendChild(discussionTitleSpan);
 
     const discussionInfoSpan = document.createElement('span');
     discussionInfoSpan.classList.add('discussionInfo');
-    discussionInfoSpan.textContent = `${discussion.info}`;
+    discussionInfoSpan.textContent = `${discussion.JobDescription}`;
     discussionDiv.appendChild(discussionInfoSpan);
-
-    // Create and append the button element
-    const discussionSettingsButton = document.createElement('button');
-    discussionSettingsButton.classList.add('discussionSettings');
-    const img = document.createElement('img');
-    img.src = '/assets/dots.svg';
-    discussionSettingsButton.appendChild(img);
-    discussionDiv.appendChild(discussionSettingsButton);
 
     // Append the created element to #discussions
     const discussionsContainer = document.getElementById('discussions');
-    if (discussionsContainer) {
-        discussionsContainer.appendChild(discussionDiv);
-    } else {
-        console.error('Element with ID "discussions" not found.');
-    }
+    discussionsContainer.appendChild(discussionDiv);
+
 }
 
 
-function createMessageElement(messageBy, messageContent) {
-    // Create the div element
+function createMessageElement(messageBy, messageContent, media = false) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
 
     // Create and append the span elements
     const messageBySpan = document.createElement('span');
     messageBySpan.classList.add('messageBy');
-    messageBySpan.textContent = messageBy;
+    messageBySpan.textContent = messageBy + ": ";
     messageDiv.appendChild(messageBySpan);
 
     const messageContentSpan = document.createElement('span');
     messageContentSpan.classList.add('messageContent');
-    messageContentSpan.textContent = messageContent;
+    if(!media){
+        messageContentSpan.textContent = messageContent;
+
+    }else{
+        messageContentSpan.innerHTML = `<a href=/media/${selectedDiscussion.DiscussionID}/${messageContent} target="_blank">${messageContent}</a>`
+    }
     messageDiv.appendChild(messageContentSpan);
 
-    // Append the created element to #discussionMessages
-    const discussionMessagesContainer = document.getElementById('discussionMessages');
-    if (discussionMessagesContainer) {
-        discussionMessagesContainer.appendChild(messageDiv);
-    } else {
-        console.error('Element with ID "discussionMessages" not found.');
-    }
+    dicussionMessages.appendChild(messageDiv);
 }
 
+function generateQuote(quote, discussion) {
+    while (dicussionMessages.lastElementChild) {
+        dicussionMessages.lastElementChild.remove()
+    }
+    // Create elements
+    const quoteDiv = document.createElement('div');
+    quoteDiv.id = 'quoteDiv';
 
+    const quoteContent = document.createElement('span');
+    quoteContent.id = 'quoteContent';
+    quoteContent.textContent = `${quote.FullName} sent you a quote: ${quote.QuoteAmount}BHD, ${quote.QuoteMessage}`;
+
+    const quoteBtnsDiv = document.createElement('div');
+    quoteBtnsDiv.id = 'quoteBtns';
+
+    const interestedBtn = document.createElement('button');
+    interestedBtn.className = 'quoteBtn lightBorder';
+    interestedBtn.textContent = 'Interested';
+
+    const notInterestedBtn = document.createElement('button');
+    notInterestedBtn.className = 'quoteBtn lightBorder';
+    notInterestedBtn.textContent = 'Not Interested';
+
+    interestedBtn.addEventListener('click', () => {
+        const data = {
+            UserID: quote.UserID,
+            DiscussionID: discussion.DiscussionID
+        };
+        fetch('/interested', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                // Handle response if needed
+                console.log('Added discussion user:', response);
+            })
+            .catch(error => {
+                console.error('Error adding discussion user:', error);
+            });
+    });
+
+    notInterestedBtn.addEventListener('click', () => {
+        fetch('/deleteDiscussion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                UserID: quote.UserID,
+                DiscussionID: discussion.DiscussionID
+            })
+        })
+            .then(response => {
+                // Handle response if needed
+                console.log('Deleted discussion:', response);
+            })
+            .catch(error => {
+                console.error('Error deleting discussion:', error);
+            });
+    });
+
+    // Append elements
+    quoteBtnsDiv.appendChild(interestedBtn);
+    quoteBtnsDiv.appendChild(notInterestedBtn);
+
+    quoteDiv.appendChild(quoteContent);
+    quoteDiv.appendChild(quoteBtnsDiv);
+
+    // Append to #discussionBoard
+    dicussionMessages.appendChild(quoteDiv);
+}
+
+function filterDiscussions(btn) {
+    let prevSelected = document.querySelector(".discussionPanelHeaderBtn.selected")
+    if (prevSelected.classList) {
+        prevSelected.classList.remove("selected")
+    }
+    const status = btn.innerText
+    btn.classList.add("selected")
+    const discussions = document.querySelectorAll('.discussion');
+
+    discussions.forEach(discussion => {
+        const discussionStatus = discussion.discussion.DiscussionStatus;
+
+        if (status === 'All' || discussionStatus === status) {
+            discussion.style.display = 'flex';
+        } else {
+            discussion.style.display = 'none';
+        }
+    });
+}
+
+for (let a = 0; a < window.pageData.discussions.length; a++) {
+    createDiscussionElement(window.pageData.discussions[a])
+}
+
+const mediaFileInput = document.getElementById('mediaFileInput');
+const uploadMediaBtn = document.getElementById('uploadMediaBtn');
+
+// Trigger file selection when the "Upload File" button is clicked
+uploadMediaBtn.addEventListener('click', () => {
+    mediaFileInput.click(); // Programmatically trigger file input click event
+});
+
+// Listen for file selection in the hidden file input
+mediaFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+
+    if (!file) {
+        console.error('No file selected');
+        return;
+    }
+
+    sendMediaToServer(file);
+});
+
+function sendMediaToServer(file) {
+    const formData = new FormData();
+
+    formData.append('DiscussionID', selectedDiscussion.DiscussionID);
+    formData.append('UserID', window.pageData.authData.UserID);
+    formData.append('MediaType', 'file');
+    formData.append('mediaFile', file);
+
+    fetch('/uploadMedia', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            // Handle the response from the server if needed
+            console.log('Media uploaded successfully');
+        })
+        .catch(error => {
+            // Handle error if media upload fails
+            console.error('Error uploading media:', error);
+        });
+}
+
+const firstDiscussion = document.querySelector(".discussion")
+socket.on('connect', () => {
+    if (firstDiscussion) {
+        firstDiscussion.click()
+    }
+});
+socket.on('message', (message) => {
+    createMessageElement(message.by, message.content)
+});
+
+socket.on('media', (message) => {
+    createMessageElement(message.by, message.media, true)
+});

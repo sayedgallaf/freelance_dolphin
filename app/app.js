@@ -7,6 +7,34 @@ const PORT = 3000;
 
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'media/');
+    },
+    filename: function (req, file, cb) {
+        const extname = path.extname(file.originalname);
+        cb(null, Date.now() + extname); // Rename the file
+    }
+});
+const profileStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'ProfilePic/');
+    },
+    filename: function (req, file, cb) {
+        const extname = path.extname(file.originalname);
+        cb(null, Date.now() + extname); // Rename the file
+    }
+});
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 100000000 }, // Set file size limit if needed (in bytes)
+})
+const uploadProfile = multer({
+    storage: profileStorage,
+    limits: { fileSize: 100000000 }, // Set file size limit if needed (in bytes)
+})
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -17,6 +45,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+
+// Initialize Multer upload variable
+
 const capitalize = s => s && s[0].toUpperCase() + s.slice(1)
 const terms = fs.readFileSync(path.resolve("public", "assets", "terms.txt"), "utf-8")
 const privacy = fs.readFileSync(path.resolve("public", "assets", "privacy.txt"), "utf-8")
@@ -35,13 +67,19 @@ const QuoteController = require('./controllers/quoteController');
 const ReportController = require('./controllers/reportController');
 const ContractController = require('./controllers/contractController');
 const ReviewController = require('./controllers/reviewController');
+const DiscussionController = require('./controllers/discussionController');
+const DisputeController = require('./controllers/disputeController');
+const SocialController = require('./controllers/socialController');
 
 //models
 const UserModel = require('./models/userModel')
 const JobModel = require('./models/jobModel')
 const ContractModel = require('./models/contractModel')
 const ReviewModel = require('./models/reviewModel')
+const QuoteModel = require('./models/quoteModel')
 const SkillModel = require('./models/skillModel')
+const DiscussionModel = require("./models/discussionModel")
+const SocialModel = require("./models/socialModel")
 
 
 //user routers
@@ -54,6 +92,7 @@ app.post("/confirmForgotPassword", UserController.confirmForgotPassword)
 app.post("/changePassword", UserController.changePassword)
 
 app.post("/updateProfile", UserController.updateUserProfile)
+app.post("/updateProfilePic",uploadProfile.single("ProfilePic"), UserController.updateUserProfile)
 app.post("/depositBalance", UserController.depositBalance)
 
 
@@ -82,11 +121,29 @@ app.post("/createReport", ReportController.createReport)
 
 
 //contract routes
-app.post("/getAllUserContracts", ContractController.getAllContractsByUserID)
+app.post("/createContract", isEmployer, ContractController.createContract)
+app.post("/endContract", isEmployer, ContractController.endContract)
 
 //review routes
 app.post("/getReviewByJobID", ReviewController.getReviewByJobID)
+app.post("/addReview", ReviewController.addReview)
 
+//discussion router
+app.post("/getDiscussion", DiscussionController.getDiscussion)
+app.post("/deleteDiscussion", DiscussionController.deleteDiscussion)
+app.post("/interested", DiscussionController.interested)
+app.post("/createMessage", DiscussionController.createMessage)
+app.post("/uploadMedia",upload.single("mediaFile"), DiscussionController.uploadMedia, (req,res) => {
+    const { DiscussionID } = req.body;
+    io.to(DiscussionID).emit('media', {by:req.session.authData.FullName, media:req.file.filename}); // Broadcast the message to all connected clients     
+})
+
+//dispute routes
+app.post("/createDispute",DisputeController.createDispute)
+
+//social routes
+app.post("/createSocial", SocialController.createSocial)
+app.post("/updateSocial", SocialController.updateSocial)
 
 app.get("/", verifyToken, (req, res) => {
     res.render("landing", { data: { authData: req.session.authData } })
@@ -104,11 +161,11 @@ app.get("/listings", verifyToken, (req, res) => {
     res.render("listings", { data: { authData: req.session.authData } })
 })
 
-app.get("/dashboard/jobs", verifyToken, async (req, res) => {
+app.get("/dashboard", verifyToken, async (req, res) => {
     const sidePanelURLs = [
-        { href: "/dashboard/jobs", title: "Jobs" },
-        { href: "/", title: "Discussions" },
-        { href: "/profile/"+req.session.authData.UserID, title: "Profile" },
+        { href: "/dashboard", title: "Jobs" },
+        { href: "/discussion", title: "Discussions" },
+        { href: "/profile/", title: "Profile" },
     ]
     const UserID = req.session.authData ? req.session.authData.UserID : null
     if (!UserID) {
@@ -143,8 +200,8 @@ app.get("/dashboard/jobs", verifyToken, async (req, res) => {
     }
 })
 
-app.get("/profile/:UserID", verifyToken, async (req, res) => {
-    const UserID = req.params.UserID;
+app.get("/profile/:UserID?", verifyToken, async (req, res) => {
+    const UserID = req.params.UserID ? req.params.UserID : (req.session.authData ? req.session.authData.UserID : null);
     if (!UserID) {
         return res.status(404).json({ message: 'Specify UserID' });
     }
@@ -153,7 +210,6 @@ app.get("/profile/:UserID", verifyToken, async (req, res) => {
     try {
         User = await UserModel.getUserById(UserID);
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ message: "Error retrieving user information" });
     }
 
@@ -161,38 +217,65 @@ app.get("/profile/:UserID", verifyToken, async (req, res) => {
         return res.status(404).json({ message: "User doesn't exist" });
     }
     delete User.Password;
+
+    let skills = await SkillModel.getAllSkills()
+    let socials = await SocialModel.getSocialsByUserID(UserID)
+
     try {
         const jobs = await JobModel.getJobsByUser(UserID);
 
         if (jobs && jobs.length > 0) {
             for (let i = 0; i < jobs.length; i++) {
                 const job = jobs[i];
-                const review = await ReviewModel.getReviewByJobID(job.JobID);
+                const review = await ReviewModel.getReviewByJobID(job.JobID, UserID);
                 jobs[i].review = review;
             }
         }
 
         res.render("profile", {
-            data: { authData: req.session.authData, jobs: jobs ? jobs : [], user: User }
+            data: { authData: req.session.authData, jobs: jobs ? jobs : [], user: User, skills, socials }
         });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ message: "Error retrieving jobs or reviews" });
     }
 });
 
-app.get("/discussion",verifyToken,(req,res) => {
+app.get("/discussion", verifyToken, async (req,res) => {
     const UserID = req.session.authData ? req.session.authData.UserID : null
     if (!UserID) {
         return res.status(404).json({ message: 'You Must Login' });
     }
     const sidePanelURLs = [
-        { href: "/dashboard/jobs", title: "Jobs" },
-        { href: "/", title: "Discussions" },
-        { href: "/profile/"+req.session.authData.UserID, title: "Profile" },
+        { href: "/dashboard", title: "Jobs" },
+        { href: "/discussion", title: "Discussions" },
+        { href: "/profile/", title: "Profile" }
     ]
-    res.render("discussion",{data:{ authData: req.session.authData, sidePanelURLs}})
+
+    let skills = await SkillModel.getAllSkills()
+    const discussions = await DiscussionModel.getAllDiscussionsByUserID(UserID);
+    console.log(discussions)
+    res.render("discussion",{data:{ authData: req.session.authData, sidePanelURLs, discussions, skills}})
 })
+
+app.get("/media/:DiscussionID/:filename", (req,res) => {
+    const { DiscussionID, filename } = req.params;
+    const userCheck = DiscussionModel.checkIfUserInDiscussion(req.session.authData.UserID,DiscussionID)
+    if(!userCheck){
+        return res.status(400).json({ message: 'Unauthorized' });
+    }
+    res.sendFile(path.resolve("media", filename))
+})
+app.get("/ProfilePic/:filename", (req,res) => {
+    const { filename } = req.params;
+    const filePath = path.resolve("ProfilePic", filename)
+    const fileExists = fs.existsSync(filePath)
+    if(fileExists){
+        return res.sendFile(filePath)
+    }else{
+        return res.sendStatus(404)
+    }
+})
+
 app.get('/logout', (req, res) => {
     res.clearCookie('authorization'); // Clears the 'authorization' cookie
     req.session.authData = null; // Clear session data if needed
@@ -210,7 +293,10 @@ const io = require('socket.io')(server);
 
 
 io.on('connection', (socket) => {
+    socket.on('joinRoom', (roomName) => {
+        socket.join(roomName); 
+    });
     socket.on('message', (message) => {
-        io.to(message.room).emit('chat message', {by:message.by, content:message.content}); // Broadcast the message to all connected clients
+        io.to(message.room).emit('message', {by:message.by, content:message.content}); // Broadcast the message to all connected clients     
     });
 });

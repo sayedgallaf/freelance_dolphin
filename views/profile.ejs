@@ -42,7 +42,22 @@
                                 <span class="profileSkill lightBorder"><%= skill.skillName %></span>
                             <% }); %>
                         </div>
-                        
+                        <% if (data.socials.Youtube) { %>
+                        <div id="socialsDiv">
+                            <% if (data.socials.Youtube.URL) { %>
+                                <a href="<%= data.socials.Youtube.URL %>"><img src="/assets/youtube.svg"></a>
+                            <% } %>
+                            <% if (data.socials.Github.URL) { %>
+                                <a href="<%= data.socials.Github.URL %>"><img src="/assets/github.svg"></a>
+                            <% } %>
+                            <% if (data.socials.Instagram.URL) { %>
+                                <a href="<%= data.socials.Instagram.URL %>"><img src="/assets/instagram.svg"></a>
+                            <% } %>
+                            <% if (data.socials.Twitter.URL) { %>
+                                <a href="<%= data.socials.Twitter.URL %>"><img src="/assets/twitter.svg"></a>
+                            <% } %>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>

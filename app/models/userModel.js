@@ -36,7 +36,6 @@ const User = {
             return user;
         } catch (error) {
             // Handle the error gracefully
-            console.log(error)
             return null;
         }
     },
@@ -44,12 +43,11 @@ const User = {
     
 
     async createUser(user) {
-        const { UserID, UserType, FullName, Email, Password, Bio, Balance } = user;
+        const { UserID, UserType, FullName, Email, Password, Bio, ProfilePicURL, Balance } = user;
         try {
             const hashedPassword = await bcrypt.hash(Password, 10); // Hashing the password
-
-            const sql = 'INSERT INTO User (UserID, UserType, FullName, Email, Password, Balance, Bio) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const [result] = await db.query(sql, [UserID, UserType, FullName, Email, hashedPassword, Balance, Bio]);
+            const sql = 'INSERT INTO User (UserID, UserType, FullName, Email, Password, ProfilePicURL, Balance, Bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            const [result] = await db.query(sql, [UserID, UserType, FullName, Email, hashedPassword, ProfilePicURL, Balance, Bio]);
 
             return result.insertId; // Return the ID of the newly created user
         } catch (error) {
@@ -82,7 +80,7 @@ const User = {
     async increaseBalance(userId, amount) {
         try {
             // Increment the balance by the specified amount
-            const updateResult = await db.query('UPDATE User SET Balance = Balance + ? WHERE UserID = ?', [amount, userId]);
+            const updateResult = await db.query('UPDATE User SET Balance = Balance + ? WHERE UserID = ?', [Number(amount), userId]);
     
             return updateResult[0].affectedRows > 0;
         } catch (error) {
@@ -107,7 +105,7 @@ const User = {
         }
     },
     async updateUser(id, updatedUserData) {
-        const { UserType, FullName, Email, Password, Bio } = updatedUserData;
+        const { UserType, FullName, Email, Password, Bio, ProfilePicURL } = updatedUserData;
         try {
             let updateFields = '';
             const updateValues = [];
@@ -132,6 +130,11 @@ const User = {
             if (Bio) {
                 updateFields += 'Bio = ?, ';
                 updateValues.push(Bio);
+            }
+            
+            if (ProfilePicURL) {
+                updateFields += 'ProfilePicURL = ?, ';
+                updateValues.push(ProfilePicURL);
             }
 
             // Remove trailing comma and space from updateFields

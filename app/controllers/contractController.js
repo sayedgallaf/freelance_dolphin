@@ -1,6 +1,9 @@
 const Contract = require('../models/contractModel');
 const User = require('../models/userModel');
 const Job = require('../models/jobModel');
+const Discussion = require('../models/discussionModel');
+const Escrow = require('../models/escrowModel');
+const Transaction = require('../models/transactionModel');
 const random = require("nanoid");
 
 const ContractController = {
@@ -28,7 +31,6 @@ const ContractController = {
 
             res.status(200).json({ contracts: contractsWithUserData });
         } catch (error) {
-            console.log(error)
             res.status(500).json({ message: `Error: ${error.message}` });
         }
     },
@@ -49,13 +51,43 @@ const ContractController = {
 
     async createContract(req, res) {
         try {
-            const contractData = req.body;
+            const ContractID = random.nanoid(15)
+            const EscrowID = random.nanoid(15)
+            const EmployerID = req.session.authData ? req.session.authData.UserID : null
+            const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            
+            if (!EmployerID) {
+                return res.status(400).json({ message: 'You Must Login' });
+            }
 
-            contractData.ContractID = random.nanoid(15);
-            contractData.Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            if(req.session.authData.UserType != "employer"){
+                return res.status(400).json({ message: 'Unauthorized' });
+            }
+        
+            const {DiscussionID, JobID, FreelancerID, Amount, Deadline } = req.body;
 
-            const createdContractID = await Contract.createContract(contractData);
 
+            const employer = await User.getUserById(EmployerID)
+            if(employer.Balance < Amount){
+                return res.status(400).json({ message: 'Insuffient Funds' });
+            }
+
+            const escrow = await Escrow.createEscrow({EscrowID, JobID, EmployerID, Amount, Timestamp})
+            if(!escrow){
+                return res.status(400).json({ message: 'Error' });
+            }
+            await User.spendBalance(EmployerID,Amount);
+
+            const createdContractID = await Contract.createContract({
+                ContractID,
+                EscrowID,
+                JobID,
+                FreelancerID,
+                EmployerID,
+                Deadline,
+                Timestamp
+            });
+            await Discussion.updateDiscussionStatus(DiscussionID,"Hired")
             res.status(201).json({ message: 'Contract created successfully', ContractID: createdContractID });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
@@ -78,16 +110,30 @@ const ContractController = {
         }
     },
 
-    async deleteContract(req, res) {
+    async endContract(req, res) {
         try {
-            const { ContractID } = req.body;
-            const contractDeleted = await Contract.deleteContract(ContractID);
-
-            if (!contractDeleted) {
-                return res.status(404).json({ message: 'Contract not found or could not be deleted' });
+            const { ContractID, DiscussionID } = req.body;
+            const contract = await Contract.getContractByID(ContractID);
+            if (!contract) {
+                return res.status(404).json({ message: 'Contract not found' });
             }
 
-            res.status(200).json({ message: 'Contract deleted successfully' });
+            const escrow = await Escrow.getEscrowByID(contract.EscrowID);
+            if (!escrow) {
+                return res.status(404).json({ message: 'Escrow not found' });
+            }
+
+            await User.increaseBalance(contract.FreelancerID,escrow.Amount);
+
+            const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            await Transaction.createTransaction({
+                TransactionID:random.nanoid(15), UserID:contract.FreelancerID, TransactionType:`Contract Finished`, Description:`Contract By ${contract.EmployerID}`, Amount:contract.Amount, Timestamp
+            })
+
+            await Discussion.updateDiscussionStatus(DiscussionID, "Archived")
+            /* await Escrow.deleteEscrow(escrow.EscrowID) */
+            
+            res.status(200).json({ message: 'Contract ended successfully' });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
         }

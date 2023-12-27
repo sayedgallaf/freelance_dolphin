@@ -55,7 +55,6 @@ const iterateJobs = async () => {
             dashboardJobsBody.lastElementChild.remove()
         }
         const jobs = window.pageData.jobs
-        console.log(jobs)
         for(let a =0; a < jobs.length; a++){
             generateDashboardJobElement(jobs[a],jobs[a].contract ? jobs[a].contract.user : null)
         }

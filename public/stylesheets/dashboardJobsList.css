@@ -37,6 +37,7 @@
     padding: 5px 10px;
     background-color: white;
     color: #222830;
+    cursor: pointer;
 }
 .dashboardJobsHeaderBtn.themedBtn{
     background-color: #222830;
@@ -69,6 +70,7 @@
 .dashboardJob.themedBtn{
     background-color: #222830;
     color: white;
+    border: none;
 }
 .dashboardJob.themedBtn a{
     color: white;

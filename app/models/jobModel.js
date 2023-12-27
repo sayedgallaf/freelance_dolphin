@@ -14,12 +14,20 @@ const Job = {
         try {
             const [rows] = await db.query(`SELECT j.*, u.UserID, u.UserType, u.FullName, u.Email, u.ProfilePicURL, u.Bio, 
             COALESCE(COUNT(q.JobID), 0) AS totalQuotes, GROUP_CONCAT(js.SkillID) AS jobSkills
-            FROM Job j 
-            LEFT JOIN JobSkill js ON j.JobID = js.JobID
-            LEFT JOIN User u ON j.UserID = u.UserID
-            LEFT JOIN Quote q ON j.JobID = q.JobID where u.UserID = ? GROUP BY j.JobID`, [UserID]);
+        FROM Job j 
+        LEFT JOIN JobSkill js ON j.JobID = js.JobID
+        LEFT JOIN User u ON j.UserID = u.UserID
+        LEFT JOIN Quote q ON j.JobID = q.JobID 
+        WHERE (u.UserType = 'employer' AND u.UserID = ?) OR (j.JobID IN (SELECT JobID FROM Contract WHERE FreelancerID = ?))
+        GROUP BY j.JobID
+        ORDER BY j.Timestamp DESC`, [UserID,UserID]);
+        
+
+        const [test] = await db.query(`SELECT JobID FROM Contract WHERE FreelancerID = ?`,[UserID,UserID]);
+        console.log(test)
             return rows;
         } catch (error) {
+            console.log(error)
             throw new Error(`Error fetching jobs by user: ${error.message}`);
         }
     },
@@ -84,7 +92,6 @@ const Job = {
             const [rows] = await db.query(sql, values);
             return rows;
         } catch (error) {
-            console.log(error);
             throw new Error(`Error searching and filtering jobs: ${error.message}`);
         }
     },

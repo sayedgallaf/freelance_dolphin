@@ -11,6 +11,11 @@ for(let a = 0; a < window.pageData.jobs.length; a++){
 if(window.pageData.authData){
     if(window.pageData.authData.UserID == window.pageData.user.UserID){
         document.getElementById("profileBtn").onclick = () => {generateDialog("profileSettings2")}
+        if(location.href.includes("signedUp")){
+            generateDialog("profileSettings2")
+        }
     }
 }
-jobList.querySelector(".jobListing").click()
+if(jobList.querySelector(".jobListing")){
+    jobList.querySelector(".jobListing").click()
+}

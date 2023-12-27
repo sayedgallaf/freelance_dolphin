@@ -26,6 +26,10 @@
     font-weight: bold;
     margin-bottom: -25px;
 }
+.dialogQuestion{
+    font-size: 24px;
+    font-weight: bold;
+}
 .dialogInput{
     padding: 10px;
     border-radius: 5px;
@@ -46,6 +50,9 @@
     background-color: #222830;
     color: white;
     cursor: pointer;
+}
+.functionButton{
+    margin-bottom: -10px;
 }
 .choicesDiv{
     display: flex;
@@ -82,7 +89,10 @@
 .tagify__dropdown{
     z-index: 3;
 }
-
+.tagifyElem{
+    border: 2px solid #C2C2C2 !important;
+    border-radius: 10px;
+}
 @media screen and (max-width: 900px) {
     #dynamicForm{
         width: 90%;
@@ -93,6 +103,9 @@
     .dialogLabel{
         font-size: 20px;
         margin-bottom: -10px;
+    }
+    .dialogQuestion{
+        font-size: 18px;
     }
     .dialogInput{
         padding: 5px;

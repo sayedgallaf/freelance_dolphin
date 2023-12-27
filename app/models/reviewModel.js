@@ -18,13 +18,14 @@ const Review = {
             throw new Error(`Error fetching review: ${error.message}`);
         }
     },
-    async getReviewByJobID(jobID) {
+    async getReviewByJobID(jobID, UserID) {
         try {
             const sql = `SELECT Review.*, User.UserID, User.FullName, User.Email, User.UserType, User.ProfilePicURL
             FROM Review
             INNER JOIN User ON Review.ReviewerID = User.UserID
-            WHERE Review.JobID = ?`;
-            const [rows] = await db.query(sql, [jobID]);
+            WHERE Review.JobID = ? AND Review.ReviewedID = ?`;
+            const [rows] = await db.query(sql, [jobID,UserID]);
+            console.log(rows)
             return rows;
         } catch (error) {
             throw new Error(`Error fetching reviews by JobID: ${error.message}`);
@@ -32,10 +33,10 @@ const Review = {
     },
 
     async addReview(review) {
-        const { ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp } = review;
+        const { ReviewID, JobID, ReviewerID, ReviewedID, Rating, Comment, Timestamp } = review;
         try {
-            const sql = 'INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) VALUES (?, ?, ?, ?, ?, ?)';
-            const [result] = await db.query(sql, [ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp]);
+            const sql = 'INSERT INTO Review (ReviewID, JobID, ReviewerID, ReviewedID, Rating, Comment, Timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const [result] = await db.query(sql, [ReviewID, JobID, ReviewerID, ReviewedID, Rating, Comment, Timestamp]);
             return result.insertId;
         } catch (error) {
             throw new Error(`Error adding review: ${error.message}`);

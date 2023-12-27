@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 /*     await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
     console.log("DONE")
-    return; */
+    return */
     const sqlStatements = [
         `CREATE TABLE User (
           UserID VARCHAR(20) PRIMARY KEY,
@@ -53,6 +53,14 @@ const bcrypt = require("bcrypt");
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
+        `CREATE TABLE Social (
+          SocialID VARCHAR(20) PRIMARY KEY,
+          UserID VARCHAR(20) NOT NULL,
+          URL VARCHAR(500),
+          SocialType VARCHAR(50),
+          FOREIGN KEY (UserID) REFERENCES User(UserID)
+        );`,
+
         `CREATE TABLE Quote (
           QuoteID VARCHAR(20) PRIMARY KEY,
           JobID VARCHAR(20) NOT NULL,
@@ -78,7 +86,7 @@ const bcrypt = require("bcrypt");
           UserID VARCHAR(20) NOT NULL,
           MessageContent VARCHAR(1000),
           Timestamp DATETIME,
-          FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID),
+          FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -86,7 +94,7 @@ const bcrypt = require("bcrypt");
           DiscussionUserID VARCHAR(20) PRIMARY KEY,
           DiscussionID VARCHAR(20) NOT NULL,
           UserID VARCHAR(20) NOT NULL,
-          FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID),
+          FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -94,22 +102,10 @@ const bcrypt = require("bcrypt");
           MediaID VARCHAR(20) PRIMARY KEY,
           DiscussionID VARCHAR(20) NOT NULL,
           UserID VARCHAR(20) NOT NULL,
-          MediaType VARCHAR(50),
+          MediaType VARCHAR(500),
           MediaURL VARCHAR(50),
-          Description VARCHAR(500),
           Timestamp DATETIME,
-          FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID),
-          FOREIGN KEY (UserID) REFERENCES User(UserID)
-        );`,
-
-        `CREATE TABLE Dispute (
-          DisputeID VARCHAR(20) PRIMARY KEY,
-          JobID VARCHAR(20) NOT NULL,
-          UserID VARCHAR(20) NOT NULL,
-          Description VARCHAR(1000),
-          Status VARCHAR(50),
-          ResolutionDetails VARCHAR(500),
-          FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
+          FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
@@ -126,11 +122,13 @@ const bcrypt = require("bcrypt");
           ReviewID VARCHAR(20) PRIMARY KEY,
           JobID VARCHAR(20) NOT NULL,
           ReviewerID VARCHAR(20) NOT NULL,
+          ReviewedID VARCHAR(20) NOT NULL,
           Rating FLOAT,
           Comment VARCHAR(500),
           Timestamp DATETIME,
           FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
-          FOREIGN KEY (ReviewerID) REFERENCES User(UserID)
+          FOREIGN KEY (ReviewerID) REFERENCES User(UserID),
+          FOREIGN KEY (ReviewedID) REFERENCES User(UserID)
         );`,
 
         `CREATE TABLE Contact (
@@ -177,8 +175,19 @@ const bcrypt = require("bcrypt");
         Timestamp DATETIME,
         FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
         FOREIGN KEY (FreelancerID) REFERENCES User(UserID),
-        FOREIGN KEY (EmployerID) REFERENCES User(UserID),
-        FOREIGN KEY (EscrowID) REFERENCES Escrow(EscrowID)
+        FOREIGN KEY (EmployerID) REFERENCES User(UserID)
+      );`,
+      `CREATE TABLE Dispute (
+        DisputeID VARCHAR(20) PRIMARY KEY,
+        ContractID VARCHAR(20) NOT NULL,
+        JobID VARCHAR(20) NOT NULL,
+        UserID VARCHAR(20) NOT NULL,
+        Description VARCHAR(1000),
+        Status VARCHAR(50),
+        Timestamp DATETIME,
+        FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
+        FOREIGN KEY (ContractID) REFERENCES Contract(ContractID) ON DELETE CASCADE,
+        FOREIGN KEY (UserID) REFERENCES User(UserID)
       );`,
 
 /*         `ALTER TABLE User
@@ -337,14 +346,14 @@ const contractSQLStatements = [
 ];
 
 const fakeReviewsSQL = [
-  `INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) 
-  VALUES ('review1_job1', 'job3', '123123124', 4.5, 'Great work!', '2023-12-15')`,
+  `INSERT INTO Review (ReviewID, JobID, ReviewerID, ReviewedID, Rating, Comment, Timestamp) 
+  VALUES ('review1_job1', 'job3', '123123124', '123123123', 4.5, 'Great work!', '2023-12-15')`,
   
-  `INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) 
-  VALUES ('review1_job2', 'job5', '123123124', 3.8, 'Satisfactory work.', '2023-12-17')`,
+  `INSERT INTO Review (ReviewID, JobID, ReviewerID, ReviewedID, Rating, Comment, Timestamp) 
+  VALUES ('review1_job2', 'job5', '123123124', '123123123', 3.8, 'Satisfactory work.', '2023-12-17')`,
   
-  `INSERT INTO Review (ReviewID, JobID, ReviewerID, Rating, Comment, Timestamp) 
-  VALUES ('review1_job4', 'job7', '123123124', 4.7, 'Exceeded expectations!', '2023-12-19')`
+  `INSERT INTO Review (ReviewID, JobID, ReviewerID, ReviewedID, Rating, Comment, Timestamp) 
+  VALUES ('review1_job4', 'job7', '123123124', '123123123', 4.7, 'Exceeded expectations!', '2023-12-19')`
 ];
 
 
@@ -384,9 +393,9 @@ const fakeReviewsSQL = [
       await db.query(escrowSQLStatements[a]);
     }
 
-    for(let a =0; a < contractSQLStatements.length; a++){
+/*     for(let a =0; a < contractSQLStatements.length; a++){
       await db.query(contractSQLStatements[a]);
-    }
+    } */
 
     for(let a =0; a < fakeReviewsSQL.length; a++){
       await db.query(fakeReviewsSQL[a]);

@@ -47,7 +47,6 @@ const setupFAQ = () => {
         FAQ.appendChild(question)
         FAQ.appendChild(answer)
         answers.push(answer)
-        console.log(FAQ)
         FAQ.onclick = () => {
             for(let b = 0; b < answers.length; b++){
                 answers[b].style.display = "none";
@@ -65,7 +64,7 @@ setupFAQ()
 const createJob = () => {
     if(window.pageData.authData){
         if(window.pageData.authData.UserType == "employer"){
-            location.href = "/dashboard/jobs?createJob"
+            location.href = "/dashboard/?createJob"
         }else{
             location.href = "/listings"
         }

@@ -12,7 +12,7 @@ const QuoteController = {
             const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
             const UserID = req.session.authData ? req.session.authData.UserID : null
             const { JobID, QuoteAmount, QuoteMessage } = req.body;
-            
+
             if (!JobID || !UserID || !QuoteAmount || !QuoteMessage || !Timestamp) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
@@ -23,11 +23,11 @@ const QuoteController = {
                 return res.status(404).json({ message: 'User not found' });
             }
             const job = await jobModel.getJobByID(JobID)
-            if(!job){
+            if (!job) {
                 return res.status(404).json({ message: 'Job not found' });
             }
 
-            if(user.UserType != "freelancer"){
+            if (user.UserType != "freelancer") {
                 return res.status(404).json({ message: 'User cannot quote' });
             }
 
@@ -47,18 +47,22 @@ const QuoteController = {
             const isFirstQuote = userQuotes.length === 0;
             const transaction = {
                 TransactionID: random.nanoid(15),
-                UserID:UserID,
-                TransactionType:"Quote",
-                Description:`Quote for Job: ${JobID} on ${Timestamp}`,
-                Amount:0.00,
-                Timestamp:Timestamp,
+                UserID: UserID,
+                TransactionType: "Quote",
+                Description: `Quote for Job: ${JobID} on ${Timestamp}`,
+                Amount: 0.00,
+                Timestamp: Timestamp,
             }
             // If it's the first quote for the user, create it without deducting any cost
             if (isFirstQuote) {
 
                 const createdQuoteId = await Quote.createQuote(newQuote);
-                
-                await Transcation.createTransaction(trans)
+
+                const DiscussionID = random.nanoid(15);
+                await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
+                await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
+
+                await Transcation.createTransaction(transaction)
                 return res.status(201).json({ message: 'First quote created successfully for free', createdQuoteId });
             }
 
@@ -70,19 +74,18 @@ const QuoteController = {
             // Deduct the quote cost from user's balance
             transaction.Amount = quoteCost;
             const spent = await User.spendBalance(UserID, quoteCost);
-            
+
             if (!spent) {
                 return res.status(500).json({ message: 'Error deducting balance' });
-            }else{
+            } else {
                 await Transcation.createTransaction(transaction)
             }
-            
+
             const createdQuoteId = await Quote.createQuote(newQuote);
 
             const DiscussionID = random.nanoid(15);
-            await discussionModel.createDiscussion(DiscussionID,JobID,Timestamp,"Quote")
-            const DiscussionUserID = random.nanoid(15);
-            await discussionModel.addDiscussionUser(DiscussionUserID,DiscussionID,job.UserID)
+            await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
+            await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
 
             res.status(201).json({ message: 'Quote created successfully', createdQuoteId });
         } catch (error) {

@@ -98,7 +98,15 @@ const Skill = {
             throw new Error(`Error deleting user skill: ${error.message}`);
         }
     },
-
+    async deleteUserSkills(userId) {
+        try {
+            const sql = 'DELETE FROM UserSkill WHERE UserID = ?';
+            const [result] = await db.query(sql, [userId]);
+            return result;
+        } catch (error) {
+            throw new Error(`Error deleting user skills: ${error.message}`);
+        }
+    },
     async deleteJobSkill(jobSkillId) {
         try {
             const sql = 'DELETE FROM JobSkill WHERE JobSkillID = ?';

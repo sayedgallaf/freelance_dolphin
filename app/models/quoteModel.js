@@ -68,6 +68,20 @@ const Quote = {
             throw new Error(`Error fetching quote: ${error.message}`);
         }
     },
+    async getQuoteByJobID(JobID) {
+        try {
+            const query = `
+            SELECT Quote.*, User.FullName, User.UserType
+            FROM Quote
+            INNER JOIN User ON Quote.UserID = User.UserID
+            WHERE Quote.JobID = ?
+        `;
+            const [rows] = await db.query(query, [JobID]);
+            return rows[0]; // Return the quote object or null if not found
+        } catch (error) {
+            throw new Error(`Error fetching quote: ${error.message}`);
+        }
+    },
 
     async getAllQuotes() {
         try {

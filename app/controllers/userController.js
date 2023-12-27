@@ -3,6 +3,8 @@ const User = require('../models/userModel');
 const random = require("nanoid")
 const jwt = require('jsonwebtoken');
 const resend = require('../config/email');
+const Skill = require("../models/skillModel.js")
+const Social = require("../models/socialModel.js")
 
 const UserController = {
     async loginUser(req, res) {
@@ -35,7 +37,6 @@ const UserController = {
 
             res.status(200).json({ message: 'Login successful', user });
         } catch (error) {
-            console.log(error)
             res.status(500).json({ message: `Error: ${error.message}` });
         }
     },
@@ -78,11 +79,45 @@ const UserController = {
                 UserType,
                 FullName,
                 Email,
+                ProfilePicURL:"/assets/pfp.png",
                 Password,
+                Balance:0,
                 Bio
             };
 
-            const createdUserId = await User.createUser(newUser);
+            await User.createUser(newUser);
+            await Social.createSocial(
+                {
+                    SocialID:random.nanoid(15),
+                    UserID:UserID,
+                    URL:"",
+                    SocialType:"Youtube"
+                }
+            )
+            await Social.createSocial(
+                {
+                    SocialID:random.nanoid(15),
+                    UserID:UserID,
+                    URL:"",
+                    SocialType:"Github"
+                }
+            )
+            await Social.createSocial(
+                {
+                    SocialID:random.nanoid(15),
+                    UserID:UserID,
+                    URL:"",
+                    SocialType:"Instagram"
+                }
+            )
+            await Social.createSocial(
+                {
+                    SocialID:random.nanoid(15),
+                    UserID:UserID,
+                    URL:"",
+                    SocialType:"Twitter"
+                }
+            )
 
             const expiresIn1Month = 30 * 24 * 60 * 60;
             const token = jwt.sign({ UserID: UserID }, process.env.JWT_KEY, { expiresIn: expiresIn1Month });
@@ -91,7 +126,6 @@ const UserController = {
                 httpOnly: true,
                 secure: false
             });
-            console.log("test")
             res.status(201).json({ message: 'User created successfully' });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
@@ -182,15 +216,17 @@ const UserController = {
     },
     async updateUserProfile(req, res) {
         try {
-            const { type, value } = req.body;
+            let { type, value } = req.body;
 
             const UserID = req.session.authData ? req.session.authData.UserID : null;
             if (!UserID) {
                 return res.status(400).json({ message: 'Unauthorized' });
             }
 
-            const allowedTypes = ['FullName', 'Bio', 'Email'];
-
+            const allowedTypes = ['FullName', 'Bio', 'Email', "Skills", "ProfilePicURL"];
+            if(req.file){
+                value = req.file.filename
+            }
             if (!type || !value || !allowedTypes.includes(type)) {
                 return res.status(400).json({ message: 'Invalid request' });
             }
@@ -207,6 +243,8 @@ const UserController = {
                 updatedUserData.FullName = value;
             } else if (type === 'Bio') {
                 updatedUserData.Bio = value;
+            } else if (type === 'ProfilePicURL') {
+                updatedUserData.ProfilePicURL = "/ProfilePic/"+value;
             } else if (type === 'Email') {
                 // Check if the provided email already exists
                 const existingUser = await User.getUserByEmail(value);
@@ -216,6 +254,22 @@ const UserController = {
                 }
 
                 updatedUserData.Email = value;
+            } else if (type === 'Skills') {
+                // Delete existing user skills
+                await Skill.deleteUserSkills(UserID);
+
+                // Recreate skills for the user
+                if (value && Array.isArray(value)) {
+                    for (const skill of value) {
+                        await Skill.addUserSkill({
+                            UserSkillID:random.nanoid(15),
+                            UserID,
+                            SkillID: skill.id,
+                            SkillName: skill.value
+                        });
+                    }
+                }
+                return res.status(200).json({ message: 'Profile updated successfully' });
             }
 
             const isUpdated = await User.updateUser(UserID, updatedUserData);
@@ -231,7 +285,10 @@ const UserController = {
     },
     async depositBalance(req,res){
         const UserID = req.session.authData ? req.session.authData.UserID : null;
-        const {amount} = req.body
+        const {amount, paymentMethod} = req.body
+        if(!paymentMethod){
+            return res.status(400).json({ message: 'Select Payment Method' });
+        }
         if (!UserID) {
             return res.status(400).json({ message: 'Unauthorized' });
         }

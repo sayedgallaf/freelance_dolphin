@@ -50,7 +50,7 @@ const Contract = {
     async deleteContract(ContractID) {
         try {
             const [result] = await db.query('DELETE FROM Contract WHERE ContractID = ?', [ContractID]);
-            return result.affectedRows > 0;
+            return result;
         } catch (error) {
             throw new Error(`Error deleting contract: ${error.message}`);
         }

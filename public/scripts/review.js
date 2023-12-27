@@ -22,7 +22,7 @@ function createReview(review) {
     reviewDiv.classList.add('review', 'lightBorder');
     const reviewTitle = document.createElement('span');
     reviewTitle.classList.add('reviewTitle');
-    reviewTitle.textContent = `Review from ${review.UserType}`;
+    reviewTitle.textContent = `${review.Rating}/5 Review from ${review.UserType}`;
 
     const reviewDate = document.createElement('span');
     reviewDate.classList.add('reviewDate');
