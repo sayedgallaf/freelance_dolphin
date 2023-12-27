@@ -68,7 +68,7 @@ const ContractController = {
 
 
             const employer = await User.getUserById(EmployerID)
-            if(employer.Balance < Amount){
+            if(Number(employer.Balance) < Amount){
                 return res.status(400).json({ message: 'Insuffient Funds' });
             }
 
