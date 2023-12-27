@@ -18,7 +18,7 @@ const showActionBtns = (chosenActionBtns = []) => {
         }
     }
 }
-const socket = io(location.origin+':3000');
+const socket = io(location.origin);
 
 let selectedDiscussion = {}
 
