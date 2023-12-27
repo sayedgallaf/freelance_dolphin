@@ -60,10 +60,10 @@ const DiscussionModel = {
             E.EscrowID, E.Amount AS EscrowAmount, E.Timestamp AS EscrowTimestamp,
             (SELECT DU_Freelancer.UserID FROM DiscussionUser DU_Freelancer
                 JOIN User U_Freelancer ON DU_Freelancer.UserID = U_Freelancer.UserID
-                WHERE DU_Freelancer.DiscussionID = DU.DiscussionID AND U_Freelancer.UserType = 'Freelancer') AS FreelancerID,
+                WHERE DU_Freelancer.DiscussionID = DU.DiscussionID AND U_Freelancer.UserType = 'freelancer') AS FreelancerID,
             (SELECT DU_Employer.UserID FROM DiscussionUser DU_Employer
                 JOIN User U_Employer ON DU_Employer.UserID = U_Employer.UserID
-                WHERE DU_Employer.DiscussionID = DU.DiscussionID AND U_Employer.UserType = 'Employer') AS EmployerID
+                WHERE DU_Employer.DiscussionID = DU.DiscussionID AND U_Employer.UserType = 'employer') AS EmployerID
         FROM DiscussionUser DU
         JOIN User U ON DU.UserID = U.UserID
         JOIN Discussion D ON DU.DiscussionID = D.DiscussionID
