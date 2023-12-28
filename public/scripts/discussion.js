@@ -237,7 +237,7 @@ function generateQuote(quote, discussion) {
             body: JSON.stringify(data)
         })
             .then(response => {
-                // Handle response if needed
+                location.reload()
                 console.log('Added discussion user:', response);
             })
             .catch(error => {
@@ -257,7 +257,7 @@ function generateQuote(quote, discussion) {
             })
         })
             .then(response => {
-                // Handle response if needed
+                location.reload()
                 console.log('Deleted discussion:', response);
             })
             .catch(error => {
