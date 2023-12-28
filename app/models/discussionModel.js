@@ -55,7 +55,7 @@ const DiscussionModel = {
     },
     async getAllDiscussionsByUserID(UserID) {
         try {
-            const sql = `SELECT DU.DiscussionID, Co.ContractID, D.Status as DiscussionStatus, DU.UserID, U.UserType, U.FullName AS UserName,
+            const sql = `SELECT DU.DiscussionID, Co.ContractID, Co.Timestamp as ContractTimestamp, Co.Deadline as ContractDeadline, D.Status as DiscussionStatus, DU.UserID, U.UserType, U.FullName AS UserName,
             D.JobID, J.Title AS JobTitle, J.Description AS JobDescription, J.Status AS JobStatus, J.Timestamp AS JobTimestamp,
             E.EscrowID, E.Amount AS EscrowAmount, E.Timestamp AS EscrowTimestamp,
             (SELECT DU_Freelancer.UserID FROM DiscussionUser DU_Freelancer
@@ -70,7 +70,7 @@ const DiscussionModel = {
         JOIN Job J ON D.JobID = J.JobID
         LEFT JOIN Contract Co ON D.JobID = Co.JobID
         LEFT JOIN Escrow E ON D.JobID = E.JobID AND E.UserID = U.UserID
-        WHERE DU.UserID = ?`;
+        WHERE DU.UserID = ? ORDER BY D.Timestamp DESC`;
             const discussionsWithJobs = await db.query(sql, [UserID]);
             return discussionsWithJobs[0]; // Return discussions along with associated job details
         } catch (error) {

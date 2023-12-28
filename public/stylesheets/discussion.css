@@ -97,6 +97,10 @@
     font-size: 28px;
     font-weight: bold;
 }
+#discussionBoardSubtitle{
+    font-size: 20px;
+    margin-top: -10px;
+}
 #dicussionMessages{
     flex: 1;
     display: flex;

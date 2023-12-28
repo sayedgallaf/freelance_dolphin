@@ -37,7 +37,7 @@ function getShortDateFormat(date) {
     const amOrPm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12; // Adjust hours to 12-hour format
 
-    return `${day}/${month}/${twoDigitYear} ${hours}:${minutes} ${amOrPm}`;
+    return `${day}/${month}/${twoDigitYear}`;
 }
 const createMessage = (message) => {
     const data = {
@@ -76,6 +76,7 @@ const sendMessage = () => {
         by: window.pageData.authData.FullName,
         content: message
     });
+    messageInput.placeholder = "Loading..."
     createMessage(message)
     messageInput.value = ""
 };
@@ -128,6 +129,7 @@ function createDiscussionElement(discussion) {
                         } else {
                             showActionBtns(["createDisputeBtn"])
                         }
+                        document.getElementById("discussionBoardSubtitle").innerText = "Held in escrow: BHD" + discussion.EscrowAmount
                     } else if (discussion.DiscussionStatus == "Archived") {
                         showActionBtns(["createReviewBtn"])
                     }else{
@@ -154,7 +156,19 @@ function createDiscussionElement(discussion) {
 
     const discussionInfoSpan = document.createElement('span');
     discussionInfoSpan.classList.add('discussionInfo');
-    discussionInfoSpan.textContent = `${discussion.JobDescription}`;
+    if(discussion.DiscussionStatus == "Quote"){
+        discussionInfoSpan.textContent = `Job Created: ${getShortDateFormat(discussion.JobTimestamp)}`;
+
+    }else if(discussion.DiscussionStatus == "Negotiation"){
+        discussionInfoSpan.textContent = `Job Created: ${getShortDateFormat(discussion.JobTimestamp)}`;
+
+    }else if(discussion.DiscussionStatus == "Hired"){
+        discussionInfoSpan.textContent = `Hired at: ${getShortDateFormat(discussion.ContractTimestamp)} - Deadline: ${getShortDateFormat(discussion.ContractDeadline)}`;
+
+    }else if(discussion.DiscussionStatus == "Archived"){
+        discussionInfoSpan.textContent = `Job Finished`;
+
+    }
     discussionDiv.appendChild(discussionInfoSpan);
 
     // Append the created element to #discussions
@@ -313,13 +327,14 @@ function sendMediaToServer(file) {
     formData.append('UserID', window.pageData.authData.UserID);
     formData.append('MediaType', 'file');
     formData.append('mediaFile', file);
-
+    messageInput.placeholder = "Loading..."
     fetch('/uploadMedia', {
         method: 'POST',
         body: formData
     })
         .then(response => {
             // Handle the response from the server if needed
+            messageInput.placeholder = "message"
             console.log('Media uploaded successfully');
         })
         .catch(error => {
@@ -335,9 +350,11 @@ socket.on('connect', () => {
     }
 });
 socket.on('message', (message) => {
+    messageInput.placeholder = "message"
     createMessageElement(message.by, message.content)
 });
 
 socket.on('media', (message) => {
+    messageInput.placeholder = "message"
     createMessageElement(message.by, message.media, true)
 });

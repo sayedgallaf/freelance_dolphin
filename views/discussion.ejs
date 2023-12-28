@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Discussions: Freelance Dolphin</title>
     <!-- stylesheets -->
     <link rel="stylesheet" href="/stylesheets/general.css">
     <link rel="stylesheet" href="/stylesheets/sideHeader.css">
     <link rel="stylesheet" href="/stylesheets/dialog.css">
     <link rel="stylesheet" href="/stylesheets/discussion.css">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz" crossorigin="anonymous"></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <script defer data-domain="dolphin.directory" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
     <div id="content">
@@ -30,7 +40,9 @@
                         <button class="discussionPanelHeaderBtn lightBorder" onclick="filterDiscussions(this)">Dispute</button>
                     </div>
                     <div id="discussions">
-
+                        <% if (data.discussions.length == 0) { %>
+                        <span style="font-size: 24px; font-weight: bold;">No Discussions Found</span>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -39,8 +51,11 @@
                 <button id="rightBottomHalfDrawer" class="responsiveDrawer lightBorder">&lsaquo;</button>
                 <div id="discussionBoard">
                     <span id="discussionBoardTitle"></span>
+                    <span id="discussionBoardSubtitle"></span>
                     <div id="dicussionMessages">
-
+                        <% if (data.discussions.length == 0) { %>
+                            <span style="font-size: 24px; font-weight: bold;">No Discussions Found</span>
+                        <% } %>
                     </div>
                     <div id="discussionActions">
                         <div id="discussionActionsBtns">

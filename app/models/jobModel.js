@@ -36,14 +36,24 @@ const Job = {
         try {
             const limitPerPage = 5; // Results per page
     
-            let sql = `
-                SELECT j.*, u.UserID, u.UserType, u.FullName, u.Email, u.ProfilePicURL, u.Bio, 
-                COALESCE(COUNT(q.JobID), 0) AS totalQuotes, GROUP_CONCAT(js.SkillID) AS jobSkills
-                FROM Job j 
-                LEFT JOIN JobSkill js ON j.JobID = js.JobID
-                LEFT JOIN User u ON j.UserID = u.UserID
-                LEFT JOIN Quote q ON j.JobID = q.JobID
-                WHERE (j.Title LIKE ? OR j.Description LIKE ?)`;
+            let sql = `SELECT j.*, 
+            u.UserID, 
+            u.UserType, 
+            u.FullName, 
+            u.Email, 
+            u.ProfilePicURL, 
+            u.Bio, 
+            COALESCE(q.totalQuotes, 0) AS totalQuotes, 
+            GROUP_CONCAT(js.SkillID) AS jobSkills
+     FROM Job j 
+     LEFT JOIN JobSkill js ON j.JobID = js.JobID
+     LEFT JOIN User u ON j.UserID = u.UserID
+     LEFT JOIN (
+         SELECT JobID, COUNT(JobID) AS totalQuotes
+         FROM Quote
+         GROUP BY JobID
+     ) q ON j.JobID = q.JobID
+     WHERE (j.Title LIKE ? OR j.Description LIKE ?) AND j.Status NOT IN ('Hired','Archived')`;
     
             const likeKeyword = `%${keyword}%`;
             const values = [likeKeyword, likeKeyword];
@@ -101,7 +111,7 @@ const Job = {
         const { JobID, UserID, Title, Description, Timestamp } = job;
         try {
             const sql = 'INSERT INTO Job (JobID, UserID, Title, Status, Description, Timestamp) VALUES (?, ?, ?, ?, ?, ?)';
-            const [result] = await db.query(sql, [JobID, UserID, Title, "active", Description, Timestamp]);
+            const [result] = await db.query(sql, [JobID, UserID, Title, "Active", Description, Timestamp]);
             return result.insertId;
         } catch (error) {
             throw new Error(`Error creating job: ${error.message}`);
@@ -127,9 +137,15 @@ const Job = {
             throw new Error(`Error deleting job: ${error.message}`);
         }
     },
-    async getUserJobs(){
-        
-    }
+    async updateStatus(JobID, newStatus) {
+        try {
+            const sql = 'UPDATE Job SET Status = ? WHERE JobID = ?';
+            const [result] = await db.query(sql, [newStatus, JobID]);
+            return result.affectedRows > 0;
+        } catch (error) {
+            throw new Error(`Error updating job status: ${error.message}`);
+        }
+    },
 };
 
 module.exports = Job;

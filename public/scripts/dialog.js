@@ -145,7 +145,7 @@ let allDialogs = {
         { content: 'Amount', type: 'label' },
         { type: 'input', inputType:"number", name: 'Amount' },
         { content: 'Deadline', type: 'label' },
-        { type: 'input', inputType:"text", name: 'Deadline' },
+        { type: 'dateInput', name: 'Deadline' },
         { type: 'button', content: 'Create', endpointURL: '/createContract', endpointSuccess:() => {location.reload()} } 
     ],
     deleteDiscussion:[
@@ -273,6 +273,25 @@ function generateDialog(dialogName) {
                 }
                 newElement.addEventListener('input', function () {
                     formData[element.name] = newElement.value; // Update formData on input change
+                });
+                break;
+
+            case 'dateInput':
+                newElement = document.createElement('input');
+                newElement.setAttribute('type', element.inputType || 'text');
+                newElement.setAttribute('name', element.name || '');
+                newElement.classList.add('dialogInput');
+                newElement.classList.add('lightBorder');
+                flatpickr(newElement, {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i"
+                })
+                newElement.addEventListener('input', function () {
+                    if(new Date(newElement.value.replace(" ", "T")) < new Date()){
+                        alert("Deadline must be in the future.")
+                        return
+                    }
+                    formData[element.name] = newElement.value.replace(" ", "T");
                 });
                 break;
 

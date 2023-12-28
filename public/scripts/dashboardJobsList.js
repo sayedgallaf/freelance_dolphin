@@ -72,7 +72,6 @@ const iterateJobs = async () => {
 // Call the function to fetch user contracts
 iterateJobs();
 
-
 function filterByStatus(selectedStatus, button) {
     const jobs = document.getElementsByClassName('dashboardJob');
     const dashboardJobsHeaderBtn = document.querySelectorAll(".dashboardJobsHeaderBtn.themedBtn")

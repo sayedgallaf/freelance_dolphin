@@ -30,6 +30,10 @@ const QuoteController = {
             if (user.UserType != "freelancer") {
                 return res.status(404).json({ message: 'User cannot quote' });
             }
+            let userQuoted = await Quote.getQuoteByJobIDAndUserID(JobID,UserID)
+            if(userQuoted){
+                return res.status(404).json({ message: 'You have already made a quote for this job' });
+            }
 
             const newQuote = {
                 QuoteID,
@@ -86,7 +90,7 @@ const QuoteController = {
             const DiscussionID = random.nanoid(15);
             await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
             await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
-
+            console.log("HEY")
             res.status(201).json({ message: 'Quote created successfully', createdQuoteId });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });

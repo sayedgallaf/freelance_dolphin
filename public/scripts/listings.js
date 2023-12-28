@@ -61,7 +61,13 @@ async function searchJobs() {
                 jobList.lastElementChild.remove()
             }
         }
+        if(jobs.length < 5){
+            loadMoreBtn.style.display = "none"
+        }else{
+            loadMoreBtn.style.display = "block"
+        }
         for(let a =0; a < jobs.length; a++){
+            console.log(jobs)
             const {JobID, UserID, Title, Description, Timestamp, FullName, ProfilePicURL, totalQuotes} = jobs[a]
             createJobListing(JobID,UserID,Title,Timestamp,Description,ProfilePicURL ? ProfilePicURL : "assets/pfp.png",FullName, totalQuotes, null)
         }

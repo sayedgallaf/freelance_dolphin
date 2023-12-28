@@ -80,7 +80,7 @@ const JobController = {
                         await Skill.addJobSkill({
                             JobSkillID: random.nanoid(15),
                             JobID: JobID,
-                            SkillID: null, // Assuming SkillID is null for a new skill
+                            SkillID: random.nanoid(15), // Assuming SkillID is null for a new skill
                             SkillName // Add the new SkillName
                         });
                     } else {

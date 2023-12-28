@@ -3,9 +3,10 @@ const Quote = {
     async createQuote(quote) {
         const { QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp } = quote;
         try {
+            
             const sql = 'INSERT INTO Quote (QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp) VALUES (?, ?, ?, ?, ?, ?)';
             const [result] = await db.query(sql, [QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp]);
-
+            console.log(await db.query(`select COUNT(*) from quote where JobID = ?`,[JobID]))
             return result.insertId; // Return the ID of the newly created quote
         } catch (error) {
             throw new Error(`Error creating quote: ${error.message}`);
@@ -98,7 +99,20 @@ const Quote = {
         } catch (error) {
             throw new Error(`Error fetching quotes by user ID: ${error.message}`);
         }
-    }
+    },
+    async getQuoteByJobIDAndUserID(JobID, UserID) {
+        try {
+            const query = `
+                SELECT *
+                FROM Quote
+                WHERE JobID = ? AND UserID = ?
+            `;
+            const [rows] = await db.query(query, [JobID, UserID]);
+            return rows.length > 0 ? rows[0] : null; // Return the quote object or null if not found
+        } catch (error) {
+            throw new Error(`Error fetching quote by JobID and UserID: ${error.message}`);
+        }
+    },
 
     // Other methods for quotes
 };

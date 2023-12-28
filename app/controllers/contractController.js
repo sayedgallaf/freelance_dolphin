@@ -88,6 +88,8 @@ const ContractController = {
                 Timestamp
             });
             await Discussion.updateDiscussionStatus(DiscussionID,"Hired")
+            await Job.updateStatus(JobID,"Hired")
+            
             res.status(201).json({ message: 'Contract created successfully', ContractID: createdContractID });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
@@ -131,7 +133,7 @@ const ContractController = {
             })
 
             await Discussion.updateDiscussionStatus(DiscussionID, "Archived")
-            /* await Escrow.deleteEscrow(escrow.EscrowID) */
+            await Job.updateStatus(contract.JobID, "Archived")
             
             res.status(200).json({ message: 'Contract ended successfully' });
         } catch (error) {

@@ -285,16 +285,16 @@ If you're passionate about utilizing your skills to create impactful solutions a
 
 Spectrum Solutions Ltd. is an equal opportunity employer committed to fostering diversity and creating an inclusive workplace for all employees.`
     const jobInserts = [
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job1', '123123123', 'Full Stack Developer', ?, 'active', '2023-01-15')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job2', '123123123', 'Data Analyst', ?, 'active', '2023-02-20')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job3', '123123123', 'Marketing Manager', ?, 'archived', '2023-03-10')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job4', '123123123', 'Software Engineer', ?, 'active', '2023-04-05')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job5', '123123123', 'Financial Analyst', ?, 'archived', '2023-05-18')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job6', '123123123', 'UI/UX Designer', ?, 'active', '2023-06-22')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job7', '123123123', 'Product Manager', ?, 'archived', '2023-07-30')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job8', '123123123', 'Human Resources Specialist', ?, 'active', '2023-08-12')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job9', '123123123', 'Systems Administrator', ?, 'active', '2023-09-25')",
-      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job10', '123123123', 'Content Writer', ?, 'archived', '2023-10-14')"
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job1', '123123123', 'Full Stack Developer', ?, 'Active', '2023-01-15')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job2', '123123123', 'Data Analyst', ?, 'Active', '2023-02-20')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job3', '123123123', 'Marketing Manager', ?, 'Archived', '2023-03-10')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job4', '123123123', 'Software Engineer', ?, 'Active', '2023-04-05')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job5', '123123123', 'Financial Analyst', ?, 'Archived', '2023-05-18')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job6', '123123123', 'UI/UX Designer', ?, 'Active', '2023-06-22')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job7', '123123123', 'Product Manager', ?, 'Archived', '2023-07-30')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job8', '123123123', 'Human Resources Specialist', ?, 'Active', '2023-08-12')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job9', '123123123', 'Systems Administrator', ?, 'Active', '2023-09-25')",
+      "INSERT INTO Job (JobID, UserID, Title, Description, Status, Timestamp) VALUES ('job10', '123123123', 'Content Writer', ?, 'Archived', '2023-10-14')"
     ];
 const skillInserts = [`INSERT INTO Skill (SkillID, SkillName) VALUES ('1001', 'Web Development');`,
 `INSERT INTO Skill (SkillID, SkillName) VALUES ('1002', 'Graphic Design');`,
@@ -370,7 +370,7 @@ const fakeReviewsSQL = [
     const sqlStatement3 = `INSERT INTO User (UserID, UserType, FullName, Email, Password, ProfilePicURL, Bio)
     VALUES ('123123125', 'admin', 'Mohammned Ali', 'mohd@example.com', '${await bcrypt.hash("adminPass123321", 10)}','/assets/pfp.png', 'I am an Admin.')`
     
-    await db.query(sqlStatement)
+/*     await db.query(sqlStatement)
     await db.query(sqlStatement2)
     await db.query(sqlStatement3)
 
@@ -391,15 +391,15 @@ const fakeReviewsSQL = [
     
     for(let a =0; a < escrowSQLStatements.length; a++){
       await db.query(escrowSQLStatements[a]);
-    }
+    } */
 
 /*     for(let a =0; a < contractSQLStatements.length; a++){
       await db.query(contractSQLStatements[a]);
     } */
 
-    for(let a =0; a < fakeReviewsSQL.length; a++){
+/*     for(let a =0; a < fakeReviewsSQL.length; a++){
       await db.query(fakeReviewsSQL[a]);
-    }
+    } */
 
     console.log(await db.query('SHOW TABLES'))
 })();
