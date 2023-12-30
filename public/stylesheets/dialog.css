@@ -93,6 +93,12 @@
     border: 2px solid #C2C2C2 !important;
     border-radius: 10px;
 }
+@media screen and (max-width: 1400px) {
+    #dynamicForm{
+        gap: 15px;
+        padding: 60px;
+    }
+}
 @media screen and (max-width: 900px) {
     #dynamicForm{
         width: 90%;
