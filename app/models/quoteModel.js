@@ -77,7 +77,7 @@ const Quote = {
             WHERE Quote.DiscussionID = ?
         `;
             const [rows] = await db.query(query, [DiscussionID]);
-            return rows; // Return the quote object or null if not found
+            return rows[0]; // Return the quote object or null if not found
         } catch (error) {
             throw new Error(`Error fetching quote: ${error.message}`);
         }
