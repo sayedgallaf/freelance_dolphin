@@ -265,12 +265,23 @@ const UserController = {
                 // Recreate skills for the user
                 if (value && Array.isArray(value)) {
                     for (const skill of value) {
-                        await Skill.addUserSkill({
-                            UserSkillID:random.nanoid(15),
-                            UserID,
-                            SkillID: skill.id,
-                            SkillName: skill.value
-                        });
+                        if (!skill.id) {
+                            // If the skill ID is null, it's a new skill
+                            const { value: SkillName } = skill;
+                            await Skill.addUserSkill({
+                                UserSkillID:random.nanoid(15),
+                                UserID,
+                                SkillID: random.nanoid(15),
+                                SkillName
+                            });
+                        } else {
+                            // If skill ID exists, associate it with the job
+                            await Skill.addUserSkill({
+                                UserSkillID:random.nanoid(15),
+                                UserID,
+                                SkillID: skill.id
+                            });
+                        }
                     }
                 }
                 return res.status(200).json({ message: 'Profile updated successfully' });
