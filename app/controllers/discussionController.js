@@ -79,13 +79,12 @@ const discussionController = {
             }
 
             const added = await DiscussionModel.addDiscussionUser(DiscussionUserID, DiscussionID, UserID);
-
-
-            
             if (added) {
                 await DiscussionModel.updateDiscussionStatus(DiscussionID, "Negotiation")
+
                 const freelancer = await User.getUserById(UserID);
                 const employer = await User.getUserById(job.UserID);
+                console.log(freelancer,employer)
                 resend.emails.send({
                     from: 'support@dolphin.directory',
                     to: freelancer.Email,
