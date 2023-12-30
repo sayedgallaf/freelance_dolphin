@@ -234,7 +234,7 @@ function createMessageElement(messageBy, messageContent, UserID, media = false) 
         messageContentSpan.textContent = messageContent;
 
     }else{
-        messageContentSpan.innerHTML = `<a href=/media/${selectedDiscussion.DiscussionID}/${messageContent} target="_blank">${messageContent}</a>`
+        messageContentSpan.innerHTML = `<a href="/media/${selectedDiscussion.DiscussionID}/${messageContent}" target="_blank">${messageContent}</a>`
     }
     messageDiv.appendChild(messageContentSpan);
 
