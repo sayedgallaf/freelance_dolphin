@@ -180,7 +180,7 @@ function createDiscussionElement(discussion) {
         const rightBottomHalf = document.getElementById("rightBottomHalf")
         const computedStyles = window.getComputedStyle(rightBottomHalf);
         const isClosed = computedStyles.right != `0px`;
-        screen.width <= 900 && isClosed ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
+        window.innerWidth <= 900 && isClosed ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
         location.hash = "job="+discussion.JobID
     }
 

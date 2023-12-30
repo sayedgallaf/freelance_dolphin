@@ -26,7 +26,7 @@ function createJobListing(JobID, UserID, jobTitle, jobDate, jobDescription, prof
             totalQuotes,
         }
 
-        screen.width <= 900 ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
+        window.innerWidth <= 900 ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
 
         let selectedJobs = document.querySelectorAll(".jobListing.selected")
         for(let a =0; a < selectedJobs.length; a++){

@@ -18,7 +18,7 @@ function generateDashboardJobElement(job, user) {
 
     div.onclick = () => {
         let selectedDashboardJobs = document.querySelectorAll(".dashboardJob.themedBtn")
-
+        
         const rightBottomHalf = document.getElementById("rightBottomHalf")
         const computedStyles = window.getComputedStyle(rightBottomHalf);
         const isClosed = computedStyles.right != `0px`;
@@ -67,7 +67,7 @@ const iterateJobs = async () => {
             if(firstJob){
                 firstJob.click()
             }else{
-                /* screen.width <= 900 ? document.getElementById("leftBottomHalfDrawer").click() : undefined; */
+                screen.width <= 900 ? document.getElementById("leftBottomHalfDrawer").click() : undefined;
             }
         }, 100);
     }
