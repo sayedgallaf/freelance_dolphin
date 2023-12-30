@@ -83,6 +83,7 @@ const discussionController = {
 
                 const freelancer = await User.getUserById(UserID);
                 const employer = await User.getUserById(job.UserID);
+                console.log(freelancer,employer)
                 resend.emails.send({
                     from: 'support@dolphin.directory',
                     to: freelancer.Email,
