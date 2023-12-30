@@ -69,6 +69,7 @@
 }
 #profileImg{
     height: 150px;
+    max-width: 250px;
 }
 #profileName{
     font-size: 24px;
@@ -170,6 +171,7 @@
     }
     #profileImg{
         height: 15vh;
+        max-width: 250px;
     }
     #profileDiv{
         width: 100%;
