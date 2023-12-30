@@ -27,7 +27,7 @@ const QuoteController = {
             if (!job) {
                 return res.status(404).json({ message: 'Job not found' });
             }
-            if(job.Status != "active"){
+            if(job.Status != "Active"){
                 return res.status(404).json({ message: 'Job is not active' });
 
             }

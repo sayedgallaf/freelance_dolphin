@@ -71,7 +71,7 @@ const ContractController = {
             if(Number(employer.Balance) < Amount){
                 return res.status(400).json({ message: 'Insuffient Funds' });
             }
-            const job = Job.getJobByID(JobID)
+            const job = await Job.getJobByID(JobID)
             if(job.Status != "Active"){
                 return res.status(400).json({ message: 'Job is not active' });
 
