@@ -37,12 +37,6 @@ const QuoteController = {
             }
             const employer = await User.getUserById(job.UserID);
 
-            resend.emails.send({
-                from: 'support@dolphin.directory',
-                to: employer.Email,
-                subject: `Freelance Dolphin: ${user.FullName} has sent you a quote`,
-                text: `Quote Amount: ${QuoteAmount}\n Message: ${QuoteMessage}`
-            })
 
             const newQuote = {
                 QuoteID,
@@ -76,6 +70,12 @@ const QuoteController = {
                 await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
 
                 await Transcation.createTransaction(transaction)
+                resend.emails.send({
+                    from: 'support@dolphin.directory',
+                    to: employer.Email,
+                    subject: `Freelance Dolphin: ${user.FullName} has sent you a quote`,
+                    text: `Quote Amount: ${QuoteAmount}\n Message: ${QuoteMessage}`
+                })
                 return res.status(201).json({ message: 'First quote created successfully for free', createdQuoteId });
             }
 
@@ -99,6 +99,14 @@ const QuoteController = {
             const DiscussionID = random.nanoid(15);
             await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
             await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
+
+            resend.emails.send({
+                from: 'support@dolphin.directory',
+                to: employer.Email,
+                subject: `Freelance Dolphin: ${user.FullName} has sent you a quote`,
+                text: `Quote Amount: ${QuoteAmount}\n Message: ${QuoteMessage}`
+            })
+            
             res.status(201).json({ message: 'Quote created successfully', createdQuoteId });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
