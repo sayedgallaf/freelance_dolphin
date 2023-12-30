@@ -110,9 +110,9 @@ function createDiscussionElement(discussion) {
         })
             .then(response => response.json())
             .then(discussionData => {
+                console.log(discussionData)
 
                 if (discussion.DiscussionStatus == "Quote") {
-                    console.log(discussionData)
                     generateQuote(discussionData, discussion)
                     showActionBtns()
                     discussionInput.style.display = "none"
