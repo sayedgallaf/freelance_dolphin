@@ -2,6 +2,8 @@ const random = require("nanoid")
 const DiscussionModel = require("../models/discussionModel");
 const QuoteModel = require('../models/quoteModel');
 const JobModel = require('../models/jobModel');
+const {resend} = require('../config/email');
+
 
 const discussionController = {
     async getDiscussion(req, res) {
@@ -78,6 +80,15 @@ const discussionController = {
             const added = await DiscussionModel.addDiscussionUser(DiscussionUserID, DiscussionID, UserID);
             if (added) {
                 await DiscussionModel.updateDiscussionStatus(DiscussionID, "Negotiation")
+
+                const freelancer = await User.getUserById(UserID);
+                const employer = await User.getUserById(job.UserID);
+                resend.emails.send({
+                    from: 'support@dolphin.directory',
+                    to: freelancer.Email,
+                    subject: `Freelance Dolphin: ${employer.FullName} is interested.`,
+                    text: `Discussion URL: https://dolphin.directory/discussion#job=${discussion.JobID}`
+                })
                 return res.status(200).json({ message: 'User added to discussion successfully' });
             } else {
                 return res.status(500).json({ error: 'Error adding user to discussion' });

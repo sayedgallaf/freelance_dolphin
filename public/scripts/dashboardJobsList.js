@@ -22,7 +22,7 @@ function generateDashboardJobElement(job, user) {
         const rightBottomHalf = document.getElementById("rightBottomHalf")
         const computedStyles = window.getComputedStyle(rightBottomHalf);
         const isClosed = computedStyles.right != `0px`;
-        screen.width <= 900 && isClosed ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
+        window.innerWidth <= 900 && isClosed ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
 
         for(let a = 0; a< selectedDashboardJobs.length; a++){
             selectedDashboardJobs[a].classList.remove("themedBtn")
@@ -67,7 +67,7 @@ const iterateJobs = async () => {
             if(firstJob){
                 firstJob.click()
             }else{
-                screen.width <= 900 ? document.getElementById("leftBottomHalfDrawer").click() : undefined;
+                window.innerWidth <= 900 ? document.getElementById("leftBottomHalfDrawer").click() : undefined;
             }
         }, 100);
     }
