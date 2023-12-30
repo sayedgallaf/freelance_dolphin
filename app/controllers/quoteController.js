@@ -4,6 +4,7 @@ const Transcation = require('../models/transactionModel');
 const discussionModel = require("../models/discussionModel")
 const jobModel = require("../models/jobModel")
 const random = require("nanoid")
+const {resend} = require('../config/email');
 
 const QuoteController = {
     async createQuote(req, res) {
