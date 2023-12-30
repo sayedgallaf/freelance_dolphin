@@ -8,7 +8,7 @@ const sendToAdmins = async (subject,email) => {
     const adminEmails = (await User.getAdminEmails()).map(e => e.Email)
     for(let a =0; a < adminEmails.length; a++){
         resend.emails.send({
-            from: 'system@dolphin.directory',
+            from: 'support@dolphin.directory',
             to: adminEmails[a],
             subject: subject,
             text: email
