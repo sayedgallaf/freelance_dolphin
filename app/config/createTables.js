@@ -7,12 +7,12 @@ const bcrypt = require("bcrypt");
     /* console.log(await User.getAllUsers()) */
     /* return; */
 
-    await db.query(`SELECT *
+/*     await db.query(`SELECT *
     INTO OUTFILE '/path/to/output/file.txt'
     FIELDS TERMINATED BY ','
     LINES TERMINATED BY '\n'
     FROM your_table_name;`);
-    return
+    return */
 
     await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
