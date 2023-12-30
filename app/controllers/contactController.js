@@ -19,7 +19,7 @@ const contactController = {
             return res.status(400).json({ message: 'All fields are required' });
         }
         const contact = { ContactID:random.nanoid(15), UserID: req.session.authData ? req.session.authData.UserID : null, ContactMethod:"Email", ContactDetails:Email, Message };
-        sendToAdmins("Contact Sent", Message)
+        sendToAdmins("Freelance Dolphin: Contact Sent", `Email: ${Email}\nMessage: ${Message}`)
         try {
             const createdContactId = await Contact.createContact(contact);
             return res.status(201).json({ message:"Message has been sent successfully." });
