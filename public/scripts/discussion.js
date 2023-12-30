@@ -112,6 +112,7 @@ function createDiscussionElement(discussion) {
             .then(discussionData => {
 
                 if (discussion.DiscussionStatus == "Quote") {
+                    console.log(discussionData)
                     generateQuote(discussionData, discussion)
                     showActionBtns()
                     discussionInput.style.display = "none"
