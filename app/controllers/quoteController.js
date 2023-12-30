@@ -27,7 +27,10 @@ const QuoteController = {
             if (!job) {
                 return res.status(404).json({ message: 'Job not found' });
             }
+            if(job.Status != "Active"){
+                return res.status(404).json({ message: 'Job is not active' });
 
+            }
             if (user.UserType != "freelancer") {
                 return res.status(404).json({ message: 'User cannot quote' });
             }
@@ -100,7 +103,7 @@ const QuoteController = {
             const DiscussionID = random.nanoid(15);
             await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
             await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
-            
+
             newQuote.DiscussionID = DiscussionID
             const createdQuoteId = await Quote.createQuote(newQuote);
 
