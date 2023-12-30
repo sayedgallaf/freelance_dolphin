@@ -95,7 +95,46 @@
 }
 @media screen and (max-width: 1400px) {
     #dynamicForm{
-        padding: 30px;
+        gap: 20px;
+        padding: 50px;
+    }
+    .dialogLabel{
+        font-size: 24px;
+        margin-bottom: -15px;
+    }
+    .dialogQuestion{
+        font-size: 20px;
+    }
+    .dialogInput{
+        padding: 7px;
+        font-size: 20px;
+    }
+    .dialogTextArea{
+        height: 90px;
+        padding: 7px;
+        font-size: 20px;
+    }
+    .dialogBtn{
+        height: 60px;
+        font-size: 24px;
+    }
+    .choicesDiv{
+        gap: 20px;
+    }
+    .dialogChoiceBtn{
+        padding: 7px;
+        font-size: 20px;
+    }
+    .dialogFunction{
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 500;
+        text-decoration: underline;
+        margin-top: -15px;
+    }
+    .dialogDesc{
+        margin-top: -15px;
+        font-size: 16px;
     }
 }
 @media screen and (max-width: 900px) {
