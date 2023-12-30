@@ -14,10 +14,10 @@ const bcrypt = require("bcrypt");
     FROM your_table_name;`);
     return */
 
-/*     await db.query(`DROP DATABASE freelance_dolphin`);
+    await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
     console.log("DONE")
-    return */
+    return
     const sqlStatements = [
         `CREATE TABLE User (
           UserID VARCHAR(20) PRIMARY KEY,
@@ -71,6 +71,14 @@ const bcrypt = require("bcrypt");
           FOREIGN KEY (UserID) REFERENCES User(UserID)
         );`,
 
+        `CREATE TABLE Discussion (
+            DiscussionID VARCHAR(20) PRIMARY KEY,
+            JobID VARCHAR(20) NOT NULL,
+            Timestamp DATETIME,
+            Status VARCHAR(50),
+            FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE
+        );`,
+
         `CREATE TABLE Quote (
           QuoteID VARCHAR(20) PRIMARY KEY,
           JobID VARCHAR(20) NOT NULL,
@@ -82,14 +90,6 @@ const bcrypt = require("bcrypt");
           FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE,
           FOREIGN KEY (DiscussionID) REFERENCES Discussion(DiscussionID) ON DELETE CASCADE,
           FOREIGN KEY (UserID) REFERENCES User(UserID)
-        );`,
-
-        `CREATE TABLE Discussion (
-            DiscussionID VARCHAR(20) PRIMARY KEY,
-            JobID VARCHAR(20) NOT NULL,
-            Timestamp DATETIME,
-            Status VARCHAR(50),
-            FOREIGN KEY (JobID) REFERENCES Job(JobID) ON DELETE CASCADE
         );`,
 
         `CREATE TABLE Message (
