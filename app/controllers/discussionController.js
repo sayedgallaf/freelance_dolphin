@@ -20,7 +20,7 @@ const discussionController = {
             }
 
             if (discussion.Status === 'Quote') {
-                const quote = await QuoteModel.getQuoteByJobID(discussion.JobID);
+                const quote = await QuoteModel.getQuoteByDiscussionID(DiscussionID);
                 return res.status(200).json(quote);
             } else if (discussion.Status != 'Quote') {
                 const messages = await DiscussionModel.getMessagesByDiscussionID(DiscussionID);

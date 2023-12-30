@@ -1,11 +1,11 @@
 const db = require('../config/db');
 const Quote = {
     async createQuote(quote) {
-        const { QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp } = quote;
+        const { QuoteID, JobID, UserID, DiscussionID, QuoteAmount, QuoteMessage, Timestamp } = quote;
         try {
             
-            const sql = 'INSERT INTO Quote (QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp) VALUES (?, ?, ?, ?, ?, ?)';
-            const [result] = await db.query(sql, [QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp]);
+            const sql = 'INSERT INTO Quote (QuoteID, JobID, UserID, DiscussionID, QuoteAmount, QuoteMessage, Timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const [result] = await db.query(sql, [QuoteID, JobID, UserID, DiscussionID, QuoteAmount, QuoteMessage, Timestamp]);
             return result.insertId; // Return the ID of the newly created quote
         } catch (error) {
             throw new Error(`Error creating quote: ${error.message}`);
@@ -68,16 +68,16 @@ const Quote = {
             throw new Error(`Error fetching quote: ${error.message}`);
         }
     },
-    async getQuoteByJobID(JobID) {
+    async getQuoteByDiscussionID(DiscussionID) {
         try {
             const query = `
             SELECT Quote.*, User.FullName, User.UserType
             FROM Quote
             INNER JOIN User ON Quote.UserID = User.UserID
-            WHERE Quote.JobID = ?
+            WHERE Quote.DiscussionID = ?
         `;
-            const [rows] = await db.query(query, [JobID]);
-            return rows[0]; // Return the quote object or null if not found
+            const [rows] = await db.query(query, [DiscussionID]);
+            return rows; // Return the quote object or null if not found
         } catch (error) {
             throw new Error(`Error fetching quote: ${error.message}`);
         }

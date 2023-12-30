@@ -63,11 +63,13 @@ const QuoteController = {
             // If it's the first quote for the user, create it without deducting any cost
             if (isFirstQuote) {
 
-                const createdQuoteId = await Quote.createQuote(newQuote);
 
                 const DiscussionID = random.nanoid(15);
                 await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
                 await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
+
+                newQuote.DiscussionID = DiscussionID
+                const createdQuoteId = await Quote.createQuote(newQuote);
 
                 await Transcation.createTransaction(transaction)
                 resend.emails.send({
@@ -94,11 +96,13 @@ const QuoteController = {
                 await Transcation.createTransaction(transaction)
             }
 
-            const createdQuoteId = await Quote.createQuote(newQuote);
 
             const DiscussionID = random.nanoid(15);
             await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
             await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
+            
+            newQuote.DiscussionID = DiscussionID
+            const createdQuoteId = await Quote.createQuote(newQuote);
 
             resend.emails.send({
                 from: 'support@dolphin.directory',
@@ -106,7 +110,7 @@ const QuoteController = {
                 subject: `Freelance Dolphin: ${user.FullName} has sent you a quote`,
                 text: `Quote Amount: ${QuoteAmount}\n Message: ${QuoteMessage}`
             })
-            
+
             res.status(201).json({ message: 'Quote created successfully', createdQuoteId });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });
