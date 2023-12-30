@@ -14,10 +14,10 @@ const bcrypt = require("bcrypt");
     FROM your_table_name;`);
     return */
 
-    await db.query(`DROP DATABASE freelance_dolphin`);
+/*     await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
     console.log("DONE")
-    return
+    return */
     const sqlStatements = [
         `CREATE TABLE User (
           UserID VARCHAR(20) PRIMARY KEY,
