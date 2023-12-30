@@ -77,7 +77,9 @@ async function searchJobs() {
             createJobListing(JobID,UserID,Title,Timestamp,Description,ProfilePicURL ? ProfilePicURL : "assets/pfp.png",FullName, totalQuotes, null)
         }
         jobList.appendChild(loadMoreBtn)
-        jobList.firstElementChild.click()
+        if(resetListings){
+            jobList.firstElementChild.click()
+        }
 
         resetListings = false;
 
