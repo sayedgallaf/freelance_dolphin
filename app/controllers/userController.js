@@ -2,7 +2,7 @@ require('dotenv').config();
 const User = require('../models/userModel');
 const random = require("nanoid")
 const jwt = require('jsonwebtoken');
-const resend = require('../config/email');
+const {resend} = require('../config/email');
 const Skill = require("../models/skillModel.js")
 const Social = require("../models/socialModel.js")
 

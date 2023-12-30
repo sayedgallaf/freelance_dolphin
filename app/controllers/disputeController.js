@@ -6,6 +6,7 @@ const Discussion = require('../models/discussionModel');
 const Escrow = require('../models/escrowModel');
 const Transaction = require('../models/transactionModel');
 const random = require("nanoid")
+const {sendToAdmins} = require('../config/email');
 
 const disputeController = {
     async getDispute(req, res) {
@@ -55,6 +56,8 @@ const disputeController = {
             };
 
             const createdDisputeID = await Dispute.createDispute(disputeData);
+            sendToAdmins("Freelance Dolphin: Dispute Started", `Reason: ${Description}\nURL: https://dolphin.directory/watchroomDiscussions#job=${JobID}
+            `)
             await Discussion.updateDiscussionStatus(DiscussionID,"Dispute")
             await Job.updateStatus(JobID,"Dispute")
 

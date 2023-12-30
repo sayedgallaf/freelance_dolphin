@@ -187,6 +187,14 @@ const User = {
         } catch (error) {
             throw new Error(`Error unbanning user: ${error.message}`);
         }
+    },
+    async getAdminEmails() {
+        try {
+            const [adminRows] = await db.query('SELECT Email FROM User WHERE UserType = ?', ['admin']);
+            return adminRows;
+        } catch (error) {
+            throw new Error(`Error fetching admin users: ${error.message}`);
+        }
     }
 
     // Other methods for updating, deleting users, etc.

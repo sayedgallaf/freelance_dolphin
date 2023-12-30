@@ -1,5 +1,6 @@
 const Report = require('../models/reportModel');
 const random = require("nanoid")
+const {sendToAdmins} = require('../config/email');
 
 const ReportController = {
     async createReport(req, res) {
@@ -20,6 +21,7 @@ const ReportController = {
                 ReportDetails,
                 Timestamp
             };
+            sendToAdmins("Freelance Dolphin: Report Created", `Report: ${ReportType}\nInformation: ${ReportDetails}`)
 
             const createdReportId = await Report.createReport(newReport);
 
