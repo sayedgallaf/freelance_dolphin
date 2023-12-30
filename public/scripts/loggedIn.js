@@ -5,4 +5,9 @@ if(window.pageData.authData){
     }
 }else{
     allDialogs.quote = allDialogs.login
+    allDialogs["reportJob"] = allDialogs.login
+    allDialogs["reportUser"] = allDialogs.login
+
+    
+
 }
