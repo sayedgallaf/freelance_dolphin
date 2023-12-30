@@ -13,9 +13,13 @@ function isEmployer(req, res, next) {
 function isFreelancer(req, res, next) {
   req.session.authData ? (req.session.authData.UserType == "freelancer" || req.session.authData.UserType == "admin" ? next() : res.sendStatus(403)) : res.sendStatus(403);
 }
+function isLoggedIn(req, res, next) {
+  req.session.authData ?  next() : res.sendStatus(403);
+}
 
 module.exports = {
   isAdmin,
   isEmployer,
-  isFreelancer
+  isFreelancer,
+  isLoggedIn
 };

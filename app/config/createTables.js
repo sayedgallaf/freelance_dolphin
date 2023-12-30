@@ -2,8 +2,10 @@ const db = require('../config/db');
 const User = require('../models/userModel');
 const bcrypt = require("bcrypt");
 (async () => {
-/*     console.log(await User.getAllUsers())
-    return; */
+    const sqlAdmin = 'INSERT INTO User (UserID, UserType, FullName, Email, Password, ProfilePicURL, Balance, Bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    await db.query(sqlAdmin, ['adgewf2432ds', 'admin', 'Admin', 'admin@example.com', await bcrypt.hash("adminpass123", 10), '/assets/pfp.png', 10000, 'I am an Admin']);
+    /* console.log(await User.getAllUsers()) */
+    return;
 /*     await db.query(`DROP DATABASE freelance_dolphin`);
     await db.query(`CREATE DATABASE freelance_dolphin`);
     console.log("DONE")

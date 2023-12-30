@@ -18,13 +18,17 @@ function generateDashboardJobElement(job, user) {
 
     div.onclick = () => {
         let selectedDashboardJobs = document.querySelectorAll(".dashboardJob.themedBtn")
-        screen.width <= 900 ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
+        
+        const rightBottomHalf = document.getElementById("rightBottomHalf")
+        const computedStyles = window.getComputedStyle(rightBottomHalf);
+        const isClosed = computedStyles.right != `0px`;
+        screen.width <= 900 && isClosed ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
 
         for(let a = 0; a< selectedDashboardJobs.length; a++){
             selectedDashboardJobs[a].classList.remove("themedBtn")
         }
         div.classList.add("themedBtn")
-        fillJobDetails(job.Title,`Posted At ${getShortDateFormat(job.Timestamp)} By ${job.FullName}`,job.Description)
+        fillJobDetails(job.Title,`Posted At ${getShortDateFormat(job.Timestamp)} By ${job.FullName}`,job.Description,job.JobID)
         selectedJob.JobID = job.JobID
     }
 

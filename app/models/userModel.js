@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const db = require('../config/db');
+const random = require("nanoid")
 
 const User = {
     async getAllUsers() {
@@ -152,6 +153,39 @@ const User = {
             }
         } catch (error) {
             throw new Error(`Error updating user: ${error.message}`);
+        }
+    },
+
+    async banUser(UserID, bannedUntil) {
+        try {
+            const BannedUserID = random.nanoid(15); // Generate a unique BannedUserID
+            const Timestamp = new Date().toISOString().slice(0, 19).replace('T', ' '); // Get the current timestamp
+            
+            const sql = 'INSERT INTO BannedUser (BannedUserID, UserID, Timestamp, bannedUntil) VALUES (?, ?, ?, ?)';
+            await db.query(sql, [BannedUserID, UserID, Timestamp, bannedUntil]);
+
+            return BannedUserID; // Return the ID of the newly created banned user record
+        } catch (error) {
+            throw new Error(`Error banning user: ${error.message}`);
+        }
+    },
+
+    async isUserBanned(UserID) {
+        try {
+            const [rows] = await db.query('SELECT * FROM BannedUser WHERE UserID = ? AND bannedUntil > NOW()', [UserID]);
+            return rows.length > 0; // Return true if the user is found in the banned users list and not expired
+        } catch (error) {
+            throw new Error(`Error checking if user is banned: ${error.message}`);
+        }
+    },
+    async unbanUser(UserID) {
+        try {
+            const sql = 'DELETE FROM BannedUser WHERE UserID = ?';
+            const [result] = await db.query(sql, [UserID]);
+
+            return result.affectedRows > 0; // Return true if the user's ban record was deleted successfully
+        } catch (error) {
+            throw new Error(`Error unbanning user: ${error.message}`);
         }
     }
 

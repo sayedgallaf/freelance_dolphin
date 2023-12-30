@@ -24,6 +24,12 @@ searchBtn.onclick = () => {
     pageNumber = 1;
     searchJobs();
 }
+
+window.addEventListener("keydown", (e) => {
+    if (e.key == "Enter") {
+        searchBtn.click()
+    }
+})
 loadMoreBtn.onclick = () => {
     pageNumber++;
     searchJobs();
@@ -67,7 +73,6 @@ async function searchJobs() {
             loadMoreBtn.style.display = "block"
         }
         for(let a =0; a < jobs.length; a++){
-            console.log(jobs)
             const {JobID, UserID, Title, Description, Timestamp, FullName, ProfilePicURL, totalQuotes} = jobs[a]
             createJobListing(JobID,UserID,Title,Timestamp,Description,ProfilePicURL ? ProfilePicURL : "assets/pfp.png",FullName, totalQuotes, null)
         }

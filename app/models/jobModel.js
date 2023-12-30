@@ -9,6 +9,14 @@ const Job = {
             throw new Error(`Error fetching job by ID: ${error.message}`);
         }
     },
+    async getAllJobs() {
+        try {
+            const [rows] = await db.query('SELECT * FROM Job');
+            return rows;
+        } catch (error) {
+            throw new Error(`Error fetching job by ID: ${error.message}`);
+        }
+    },
 
     async getJobsByUser(UserID) {
         try {
@@ -18,16 +26,12 @@ const Job = {
         LEFT JOIN JobSkill js ON j.JobID = js.JobID
         LEFT JOIN User u ON j.UserID = u.UserID
         LEFT JOIN Quote q ON j.JobID = q.JobID 
-        WHERE (u.UserType = 'employer' AND u.UserID = ?) OR (j.JobID IN (SELECT JobID FROM Contract WHERE FreelancerID = ?))
+        WHERE (u.UserType != 'freelancer' AND u.UserID = ?) OR (j.JobID IN (SELECT JobID FROM Contract WHERE FreelancerID = ?))
         GROUP BY j.JobID
         ORDER BY j.Timestamp DESC`, [UserID,UserID]);
         
-
-        const [test] = await db.query(`SELECT JobID FROM Contract WHERE FreelancerID = ?`,[UserID,UserID]);
-        console.log(test)
             return rows;
         } catch (error) {
-            console.log(error)
             throw new Error(`Error fetching jobs by user: ${error.message}`);
         }
     },
@@ -53,7 +57,7 @@ const Job = {
          FROM Quote
          GROUP BY JobID
      ) q ON j.JobID = q.JobID
-     WHERE (j.Title LIKE ? OR j.Description LIKE ?) AND j.Status NOT IN ('Hired','Archived')`;
+     WHERE (j.Title LIKE ? OR j.Description LIKE ?) AND j.Status NOT IN ('Hired','Archived','Resolved','Dispute')`;
     
             const likeKeyword = `%${keyword}%`;
             const values = [likeKeyword, likeKeyword];

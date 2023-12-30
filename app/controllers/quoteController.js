@@ -90,7 +90,6 @@ const QuoteController = {
             const DiscussionID = random.nanoid(15);
             await discussionModel.createDiscussion(DiscussionID, JobID, Timestamp, "Quote")
             await discussionModel.addDiscussionUser(random.nanoid(15), DiscussionID, job.UserID)
-            console.log("HEY")
             res.status(201).json({ message: 'Quote created successfully', createdQuoteId });
         } catch (error) {
             res.status(500).json({ message: `Error: ${error.message}` });

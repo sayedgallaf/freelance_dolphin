@@ -25,7 +25,6 @@ const Review = {
             INNER JOIN User ON Review.ReviewerID = User.UserID
             WHERE Review.JobID = ? AND Review.ReviewedID = ?`;
             const [rows] = await db.query(sql, [jobID,UserID]);
-            console.log(rows)
             return rows;
         } catch (error) {
             throw new Error(`Error fetching reviews by JobID: ${error.message}`);

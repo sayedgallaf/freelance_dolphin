@@ -129,8 +129,8 @@ const JobController = {
             if (!job) {
                 return res.status(404).json({ message: 'Job not found' });
             }
-
-            if(job.UserID != UserID){
+            
+            if(req.session.authData.UserType != "admin" && job.UserID != UserID){
                 return res.status(400).json({ message: 'Unauthorized' });
             }
 

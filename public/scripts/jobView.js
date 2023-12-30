@@ -1,4 +1,4 @@
-function fillJobDetails(title, subtitle, bodyText, totalQuotes) {
+function fillJobDetails(title, subtitle, bodyText, totalQuotes, skills) {
     // Fill in the job details in the HTML
     document.getElementById('jobViewHeaderInfoTitle').textContent = title;
     document.getElementById('jobViewHeaderInfoSubtitle').textContent = subtitle;

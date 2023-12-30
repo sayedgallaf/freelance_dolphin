@@ -11,7 +11,10 @@
 </pre>
     </div>
     <div id="dashboardJobViewBtns" style="display: none;">
-        <button class="dashboardJobViewBtn">Discussion</button>
-        <button class="dashboardJobViewBtn" onclick="generateDialog('deleteJob')">Delete</button>
+        <button class="dashboardJobViewBtn" id="discussionBtn">Discussion</button>
+        <% if (data.authData.UserType != 'freelancer') { %>
+            <button class="dashboardJobViewBtn" onclick="generateDialog('deleteJob')">Delete</button>
+
+        <% } %>
     </div>
 </div>

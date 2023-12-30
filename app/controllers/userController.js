@@ -50,6 +50,10 @@ const UserController = {
             if (!UserType || !FullName || !Email || !Password) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
+            if(UserType == "admin"){
+                return res.status(400).json({ message: 'Not Allowed' });
+
+            }
             if (Password != Password2) {
                 return res.status(400).json({ message: 'Passwords do not match' });
             }
@@ -301,6 +305,84 @@ const UserController = {
         await User.increaseBalance(UserID,amount)
 
         res.status(201).json({ message: 'Balance Added!' });
+    },
+    async giveAdmin(req, res) {
+        try {
+            const { UserID } = req.body;
+    
+            if (!UserID) {
+                return res.status(400).json({ message: 'UserID is required' });
+            }
+    
+            const user = await User.getUserById(UserID);
+    
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            if (user.UserType === 'admin') {
+                return res.status(400).json({ message: 'User is already an admin' });
+            }
+    
+            // Update UserType to 'admin' for the specified UserID
+            const isUpdated = await User.updateUser(UserID, { UserType: 'admin' });
+    
+            if (isUpdated) {
+                res.status(200).json({ message: 'User is now an admin' });
+            } else {
+                throw new Error('Failed to update user type');
+            }
+        } catch (error) {
+            res.status(500).json({ message: `Error: ${error.message}` });
+        }
+    },
+    async banUser(req, res) {
+        try {
+            const { UserID, bannedUntil } = req.body;
+
+            if (!UserID || !bannedUntil) {
+                return res.status(400).json({ message: 'UserID and bannedUntil are required' });
+            }
+
+            const isUserBanned = await User.isUserBanned(UserID);
+
+            if (isUserBanned) {
+                return res.status(400).json({ message: 'User is already banned' });
+            }
+
+            // Call the banUser function from the UserModel to ban the user
+            await User.banUser(UserID, bannedUntil);
+
+            res.status(200).json({ message: 'User banned successfully' });
+        } catch (error) {
+            res.status(500).json({ message: `Error: ${error.message}` });
+        }
+    },
+    async unbanUser(req, res) {
+        try {
+            const { UserID } = req.body;
+
+            if (!UserID) {
+                return res.status(400).json({ message: 'UserID is required' });
+            }
+
+            const isUserBanned = await User.isUserBanned(UserID);
+
+            if (!isUserBanned) {
+                return res.status(400).json({ message: 'User is not banned' });
+            }
+
+            // Call the unbanUser function from the UserModel to remove the ban for the user
+            const isUnbanned = await User.unbanUser(UserID);
+
+            if (isUnbanned) {
+                res.status(200).json({ message: 'User unbanned successfully' });
+            } else {
+                throw new Error('Failed to unban user');
+            }
+        } catch (error) {
+            res.status(500).json({ message: `Error: ${error.message}` });
+        }
     }
 };
 

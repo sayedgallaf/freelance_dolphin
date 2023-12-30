@@ -55,7 +55,7 @@ const DiscussionModel = {
     },
     async getAllDiscussionsByUserID(UserID) {
         try {
-            const sql = `SELECT DU.DiscussionID, Co.ContractID, Co.Timestamp as ContractTimestamp, Co.Deadline as ContractDeadline, D.Status as DiscussionStatus, DU.UserID, U.UserType, U.FullName AS UserName,
+            const sql = `SELECT DU.DiscussionID, R.ReviewID, Co.ContractID, Co.Timestamp as ContractTimestamp, Co.Deadline as ContractDeadline, D.Status as DiscussionStatus, DU.UserID, U.UserType, U.FullName AS UserName,
             D.JobID, J.Title AS JobTitle, J.Description AS JobDescription, J.Status AS JobStatus, J.Timestamp AS JobTimestamp,
             E.EscrowID, E.Amount AS EscrowAmount, E.Timestamp AS EscrowTimestamp,
             (SELECT DU_Freelancer.UserID FROM DiscussionUser DU_Freelancer
@@ -69,12 +69,12 @@ const DiscussionModel = {
         JOIN Discussion D ON DU.DiscussionID = D.DiscussionID
         JOIN Job J ON D.JobID = J.JobID
         LEFT JOIN Contract Co ON D.JobID = Co.JobID
-        LEFT JOIN Escrow E ON D.JobID = E.JobID AND E.UserID = U.UserID
+        LEFT JOIN Escrow E ON D.JobID = E.JobID
+        LEFT JOIN Review R ON D.JobID = R.JobID AND R.ReviewerID = U.UserID
         WHERE DU.UserID = ? ORDER BY D.Timestamp DESC`;
             const discussionsWithJobs = await db.query(sql, [UserID]);
             return discussionsWithJobs[0]; // Return discussions along with associated job details
         } catch (error) {
-            console.log(error)
             throw new Error(`Error fetching discussions and job details: ${error.message}`);
         }
     },
@@ -127,6 +127,32 @@ const DiscussionModel = {
                 throw new Error('Discussion not found');
             }
             return discussion[0]; // Return the discussion object
+        } catch (error) {
+            throw new Error(`Error fetching discussion: ${error.message}`);
+        }
+    },
+    async getAllDiscussions() {
+        try {
+            const sql = `SELECT DU.DiscussionID, DI.DisputeID, DI.Description as DisputeDescription, R.ReviewID, Co.ContractID, Co.Timestamp as ContractTimestamp, Co.Deadline as ContractDeadline, D.Status as DiscussionStatus, DU.UserID, U.UserType, U.FullName AS UserName,
+            D.JobID, J.Title AS JobTitle, J.Description AS JobDescription, J.Status AS JobStatus, J.Timestamp AS JobTimestamp,
+            E.EscrowID, E.Amount AS EscrowAmount, E.Timestamp AS EscrowTimestamp,
+            (SELECT DU_Freelancer.UserID FROM DiscussionUser DU_Freelancer
+                JOIN User U_Freelancer ON DU_Freelancer.UserID = U_Freelancer.UserID
+                WHERE DU_Freelancer.DiscussionID = DU.DiscussionID AND U_Freelancer.UserType = 'freelancer') AS FreelancerID,
+            (SELECT DU_Employer.UserID FROM DiscussionUser DU_Employer
+                JOIN User U_Employer ON DU_Employer.UserID = U_Employer.UserID
+                WHERE DU_Employer.DiscussionID = DU.DiscussionID AND U_Employer.UserType = 'employer') AS EmployerID
+        FROM DiscussionUser DU
+        JOIN User U ON DU.UserID = U.UserID
+        JOIN Discussion D ON DU.DiscussionID = D.DiscussionID
+        JOIN Job J ON D.JobID = J.JobID
+        LEFT JOIN Contract Co ON D.JobID = Co.JobID
+        LEFT JOIN Escrow E ON D.JobID = E.JobID
+        LEFT JOIN Dispute DI ON Co.ContractID = DI.ContractID
+        LEFT JOIN Review R ON D.JobID = R.JobID AND R.ReviewerID = U.UserID
+        WHERE U.UserType != 'freelancer' ORDER BY D.Timestamp DESC`;
+            const [discussion] = await db.query(sql);
+            return discussion; // Return the discussion object
         } catch (error) {
             throw new Error(`Error fetching discussion: ${error.message}`);
         }

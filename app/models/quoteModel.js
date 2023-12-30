@@ -6,7 +6,6 @@ const Quote = {
             
             const sql = 'INSERT INTO Quote (QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp) VALUES (?, ?, ?, ?, ?, ?)';
             const [result] = await db.query(sql, [QuoteID, JobID, UserID, QuoteAmount, QuoteMessage, Timestamp]);
-            console.log(await db.query(`select COUNT(*) from quote where JobID = ?`,[JobID]))
             return result.insertId; // Return the ID of the newly created quote
         } catch (error) {
             throw new Error(`Error creating quote: ${error.message}`);
@@ -112,7 +111,7 @@ const Quote = {
         } catch (error) {
             throw new Error(`Error fetching quote by JobID and UserID: ${error.message}`);
         }
-    },
+    }
 
     // Other methods for quotes
 };

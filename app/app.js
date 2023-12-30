@@ -9,6 +9,15 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const {rateLimit} = require("express-rate-limit")
+
+const limiter = rateLimit({
+	windowMs: 60 * 1000, // 15 minutes
+	limit: 1000, 
+	legacyHeaders: false
+})
+app.use(limiter)
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'media/');
@@ -56,7 +65,7 @@ const privacy = fs.readFileSync(path.resolve("public", "assets", "privacy.txt"),
 
 //middleWare
 const verifyToken = require("./middleware/verifyToken")
-const { isAdmin, isEmployer, isFreelancer } = require("./middleware/userType")
+const { isAdmin, isEmployer, isFreelancer, isLoggedIn } = require("./middleware/userType")
 
 //controllers
 const UserController = require('./controllers/userController');
@@ -91,9 +100,13 @@ app.post("/forgotPassword", UserController.forgotPassword)
 app.post("/confirmForgotPassword", UserController.confirmForgotPassword)
 app.post("/changePassword", UserController.changePassword)
 
-app.post("/updateProfile", UserController.updateUserProfile)
-app.post("/updateProfilePic",uploadProfile.single("ProfilePic"), UserController.updateUserProfile)
-app.post("/depositBalance", UserController.depositBalance)
+app.post("/updateProfile",isLoggedIn, UserController.updateUserProfile)
+app.post("/updateProfilePic",isLoggedIn,uploadProfile.single("ProfilePic"), UserController.updateUserProfile)
+app.post("/depositBalance",isLoggedIn, UserController.depositBalance)
+
+app.post("/giveAdmin",isAdmin, UserController.giveAdmin)
+app.post("/banUser",isAdmin, UserController.banUser)
+app.post("/unbanUser",isAdmin, UserController.unbanUser)
 
 
 //contact routes
@@ -110,8 +123,6 @@ app.post("/deleteJob", isEmployer, JobController.deleteJob)
 
 //skill routes
 app.post("/getAllSkills", SkillController.getAllSkills)
-app.post("/addSkill", SkillController.getAllSkills)
-app.post("/getAllSkills", SkillController.getAllSkills)
 
 //quote routes
 app.post("/createQuote", isFreelancer, QuoteController.createQuote)
@@ -126,24 +137,26 @@ app.post("/endContract", isEmployer, ContractController.endContract)
 
 //review routes
 app.post("/getReviewByJobID", ReviewController.getReviewByJobID)
-app.post("/addReview", ReviewController.addReview)
+app.post("/addReview",isLoggedIn, ReviewController.addReview)
 
 //discussion router
-app.post("/getDiscussion", DiscussionController.getDiscussion)
-app.post("/deleteDiscussion", DiscussionController.deleteDiscussion)
-app.post("/interested", DiscussionController.interested)
-app.post("/createMessage", DiscussionController.createMessage)
-app.post("/uploadMedia",upload.single("mediaFile"), DiscussionController.uploadMedia, (req,res) => {
+app.post("/getDiscussion",isLoggedIn, DiscussionController.getDiscussion)
+app.post("/deleteDiscussion",isLoggedIn, DiscussionController.deleteDiscussion)
+app.post("/interested",isLoggedIn, DiscussionController.interested)
+app.post("/createMessage",isLoggedIn, DiscussionController.createMessage)
+app.post("/uploadMedia",isLoggedIn,upload.single("mediaFile"), DiscussionController.uploadMedia, (req,res) => {
     const { DiscussionID } = req.body;
-    io.to(DiscussionID).emit('media', {by:req.session.authData.FullName, media:req.file.filename}); // Broadcast the message to all connected clients     
+    io.to(DiscussionID).emit('media', {by:req.session.authData.FullName, media:req.file.filename, UserID: req.session.authData.UserID}); // Broadcast the message to all connected clients     
 })
 
 //dispute routes
-app.post("/createDispute",DisputeController.createDispute)
+app.post("/createDispute",isLoggedIn,DisputeController.createDispute)
+app.post("/resolveDispute",isAdmin,DisputeController.resolveDispute)
+app.post("/cancelDispute",isAdmin,DisputeController.cancelDispute)
 
 //social routes
-app.post("/createSocial", SocialController.createSocial)
-app.post("/updateSocial", SocialController.updateSocial)
+app.post("/createSocial",isLoggedIn, SocialController.createSocial)
+app.post("/updateSocial",isLoggedIn, SocialController.updateSocial)
 
 app.get("/", verifyToken, (req, res) => {
     res.render("landing", { data: { authData: req.session.authData } })
@@ -170,6 +183,9 @@ app.get("/dashboard", verifyToken, async (req, res) => {
     const UserID = req.session.authData ? req.session.authData.UserID : null
     if (!UserID) {
         return res.status(404).json({ message: 'You Must Login' });
+    }
+    if(req.session.authData.UserType == "admin"){
+        return res.redirect("/watchroom")
     }
 
     try {
@@ -198,6 +214,52 @@ app.get("/dashboard", verifyToken, async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+})
+
+app.get("/watchroom", verifyToken, isAdmin, async (req, res) => {
+    const sidePanelURLs = [
+        { href: "/watchroom", title: "Jobs" },
+        { href: "/watchroomDiscussions", title: "Discussions" },
+        { href: "/profile/", title: "Profile" },
+    ]
+
+    try {
+        // Get all jobs
+        const jobs = await JobModel.getAllJobs()
+
+        // Attach contracts to jobs if they exist
+        for (const job of jobs) {
+            const contract = await ContractModel.getContractByJobID(job.JobID);
+            if (contract) {
+
+                const EmployerID = contract['EmployerID'];
+
+                // Fetch user details of the opposite type
+                const employer = await UserModel.getUserById(EmployerID);
+
+                job.contract = {
+                    ...contract,
+                    user: employer // Attach opposite user details to the contract
+                };
+            }
+        }
+
+        res.render("dashboardJobs", { data: { jobs, authData: req.session.authData, sidePanelURLs, skills:await SkillModel.getAllSkills() } });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
+
+app.get("/watchroomDiscussions", verifyToken, isAdmin, async (req,res) => {
+    const sidePanelURLs = [
+        { href: "/watchroom", title: "Jobs" },
+        { href: "/watchroomDiscussions", title: "Discussions" },
+        { href: "/profile/", title: "Profile" },
+    ]
+
+    let skills = await SkillModel.getAllSkills()
+    const discussions = await DiscussionModel.getAllDiscussions();
+    res.render("discussion",{data:{ authData: req.session.authData, sidePanelURLs, discussions, skills}})
 })
 
 app.get("/profile/:UserID?", verifyToken, async (req, res) => {
@@ -253,14 +315,13 @@ app.get("/discussion", verifyToken, async (req,res) => {
 
     let skills = await SkillModel.getAllSkills()
     const discussions = await DiscussionModel.getAllDiscussionsByUserID(UserID);
-    console.log(discussions)
     res.render("discussion",{data:{ authData: req.session.authData, sidePanelURLs, discussions, skills}})
 })
 
-app.get("/media/:DiscussionID/:filename", (req,res) => {
+app.get("/media/:DiscussionID/:filename",isLoggedIn, (req,res) => {
     const { DiscussionID, filename } = req.params;
     const userCheck = DiscussionModel.checkIfUserInDiscussion(req.session.authData.UserID,DiscussionID)
-    if(!userCheck){
+    if(req.session.authData.UserType != "admin" && !userCheck){
         return res.status(400).json({ message: 'Unauthorized' });
     }
     res.sendFile(path.resolve("media", filename))
@@ -276,7 +337,7 @@ app.get("/ProfilePic/:filename", (req,res) => {
     }
 })
 
-app.get('/logout', (req, res) => {
+app.get('/logout',isLoggedIn, (req, res) => {
     res.clearCookie('authorization'); // Clears the 'authorization' cookie
     req.session.authData = null; // Clear session data if needed
     // Perform any additional logout actions if required
@@ -294,9 +355,13 @@ const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
     socket.on('joinRoom', (roomName) => {
+        const rooms = Array.from(socket.adapter.rooms).map(([value]) => value);
+        rooms.forEach(room => {
+            socket.leave(room);
+        });
         socket.join(roomName); 
     });
     socket.on('message', (message) => {
-        io.to(message.room).emit('message', {by:message.by, content:message.content}); // Broadcast the message to all connected clients     
+        io.to(message.room).emit('message', {by:message.by, content:message.content, UserID: message.UserID}); // Broadcast the message to all connected clients     
     });
 });

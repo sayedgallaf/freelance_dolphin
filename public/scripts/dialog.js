@@ -95,6 +95,10 @@ let allDialogs = {
         { type: 'functionButton', content: 'Change Picture', onclick:() => {generateDialog("profilePic")} },
         { type: 'functionButton', content: 'Socials', onclick:() => {generateDialog("socials")} }
     ],
+    profileSettings3: [
+        { type: 'functionButton', content: 'Ban User', onclick:() => {generateDialog("banUser")} },
+        { type: 'functionButton', content: 'Give Admin', onclick:() => {generateDialog("giveAdmin")} }
+    ],
     profileFullName:[
         { content: 'Full Name', type: 'label' },
         { type: 'val', name: 'type',value:(() => {return "FullName"}) },
@@ -212,6 +216,25 @@ let allDialogs = {
         { type: 'file', name: 'ProfilePic'},
         { type: 'button', file:true, content: 'Update', endpointURL: '/updateProfilePic', endpointSuccess:() => {location.reload()} }
     ],
+    resolveDispute:[
+        { content: 'Payment goes to', type: 'label' },
+        { type: 'val', name: 'DiscussionID',value:(() => {return selectedDiscussion.DiscussionID}) },
+        { type: 'val', name: 'DisputeID',value:(() => {return selectedDiscussion.DisputeID}) },
+        { type: 'multipleChoice', name: 'paymentTo', choices: [{ label: "Employer", value: "employer" }, { label: "Freelancer", value: "freelancer" }] },
+        { type: 'button', content: 'Resolve', endpointURL: '/resolveDispute', endpointSuccess:() => {location.reload()} },
+        { type: 'button', content: 'Cancel Dispute', endpointURL: '/cancelDispute', endpointSuccess:() => {location.reload()} } 
+    ],
+    banUser:[
+        { content: 'Banned Until', type: 'label' },
+        { type: 'dateInput', name: 'bannedUntil' },
+        { type: 'val', name: 'UserID',value:(() => {return window.pageData.user.UserID}) },
+        { type: 'button', content: 'Ban', endpointURL: '/banUser', endpointSuccess:() => {location.reload()} }
+    ],
+    giveAdmin:[
+        { type: 'val', name: 'UserID',value:(() => {return window.pageData.user.UserID}) },
+        { content: 'Are you sure you want to give this user admin?', type: 'Question' },
+        { type: 'button', content: 'Yes', endpointURL: '/giveAdmin', endpointSuccess:() => {location.reload()} }
+    ]
 }
 const dialogDiv = document.getElementById('dialogDiv');
 
@@ -303,7 +326,6 @@ function generateDialog(dialogName) {
                 newElement.classList.add('dialogInput');
                 newElement.classList.add('lightBorder');
                 newElement.addEventListener('change', function () {
-                    console.log(this.files[0])
                     formData[element.name] = this.files[0]; // Update formData on input change
                 });
                 break;
@@ -444,12 +466,10 @@ function sendDataToEndpoint(data, endpointURL, endpointSuccess, isfile = false) 
     }else{
         let formData = new FormData();
         for(let key in data){
-            console.log(data[key])
             formData.append(key, data[key]);
         }
         data = formData
     }
-    console.log(data)
     fetch(endpointURL, {
         method: 'POST',
         headers:headersObj,

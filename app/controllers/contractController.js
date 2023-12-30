@@ -60,7 +60,7 @@ const ContractController = {
                 return res.status(400).json({ message: 'You Must Login' });
             }
 
-            if(req.session.authData.UserType != "employer"){
+            if(req.session.authData.UserType == "freelancer"){
                 return res.status(400).json({ message: 'Unauthorized' });
             }
         

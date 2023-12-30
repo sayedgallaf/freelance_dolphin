@@ -17,6 +17,9 @@ function verifyToken(req, res, next) {
         }else{
           req.session.authData = null
         }
+        if(await User.isUserBanned(authData.UserID)){
+          return res.status(403).json({message:"You Have Been Banned"});
+        }
         next();
       }
     });

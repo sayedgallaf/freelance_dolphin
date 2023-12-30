@@ -43,7 +43,7 @@ const discussionController = {
                 return res.status(400).json({ error: 'Discussion status is not archived or quote' });
             }
             const checkUser = await DiscussionModel.checkIfUserInDiscussion(req.session.authData.UserID,DiscussionID)
-            if (!checkUser) {
+            if (req.session.authData.UserType != "admin" && !checkUser) {
                 return res.status(400).json({ error: 'Unauthorized' });
             }
             const deleted = await DiscussionModel.deleteDiscussion(DiscussionID);
@@ -71,7 +71,7 @@ const discussionController = {
                 return res.status(400).json({ error: 'Discussion not found' });
             }
             const job = await JobModel.getJobByID(discussion.JobID)
-            if (job.UserID != req.session.authData.UserID) {
+            if (req.session.authData.UserType != "admin" && job.UserID != req.session.authData.UserID) {
                 return res.status(400).json({ error: 'Unauthorized' });
             }
 

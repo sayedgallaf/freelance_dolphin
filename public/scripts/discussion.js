@@ -1,10 +1,12 @@
 const dicussionMessages = document.getElementById('dicussionMessages');
 const messageInput = document.getElementById("messageInput")
+const discussionInput = document.getElementById("discussionInput")
 const actionBtns = {
     cancelNegotiationsBtn: document.getElementById("cancelNegotiationsBtn"),
     createContractBtn: document.getElementById("createContractBtn"),
     finishJobBtn: document.getElementById("finishJobBtn"),
     createDisputeBtn: document.getElementById("createDisputeBtn"),
+    resolveDisputeBtn: document.getElementById("resolveDisputeBtn"),
     createReviewBtn: document.getElementById("createReviewBtn")
 }
 
@@ -21,6 +23,9 @@ const showActionBtns = (chosenActionBtns = []) => {
 const socket = io(location.origin);
 
 let selectedDiscussion = {}
+if(location.href.includes("#job=")){
+    selectedDiscussion.JobID = location.href.split("#job=")[1]
+}
 
 function getShortDateFormat(date) {
     date = new Date(date);
@@ -74,6 +79,7 @@ const sendMessage = () => {
     socket.emit("message", {
         room: selectedDiscussion.DiscussionID,
         by: window.pageData.authData.FullName,
+        UserID: window.pageData.authData.UserID,
         content: message
     });
     messageInput.placeholder = "Loading..."
@@ -94,6 +100,9 @@ function createDiscussionElement(discussion) {
     discussionDiv.classList.add('discussion', 'lightBorder');
     discussionDiv.discussion = discussion
     discussionDiv.onclick = () => {
+        if(selectedDiscussion.DiscussionID){
+            socket.emit("leaveRoom", discussion.DiscussionID)
+        }
         fetch("/getDiscussion", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -105,15 +114,16 @@ function createDiscussionElement(discussion) {
                 if (discussion.DiscussionStatus == "Quote") {
                     generateQuote(discussionData, discussion)
                     showActionBtns()
+                    discussionInput.style.display = "none"
                 } else {
                     while (dicussionMessages.lastElementChild) {
                         dicussionMessages.lastElementChild.remove()
                     }
                     for (let a = 0; a < discussionData.length; a++) {
                         if(discussionData[a].MessageID){
-                            createMessageElement(discussionData[a].FullName, discussionData[a].MessageContent)
+                            createMessageElement(discussionData[a].FullName, discussionData[a].MessageContent, discussionData[a].UserID)
                         }else if(discussionData[a].MediaID){
-                            createMessageElement(discussionData[a].FullName, discussionData[a].MediaURL,true)
+                            createMessageElement(discussionData[a].FullName, discussionData[a].MediaURL, discussionData[a].UserID,true)
                         }
                         
                     }
@@ -123,17 +133,37 @@ function createDiscussionElement(discussion) {
                         } else {
                             showActionBtns(["cancelNegotiationsBtn"])
                         }
+                        document.getElementById("discussionBoardSubtitle").innerText = ""
+                        discussionInput.style.display = "flex"
                     } else if (discussion.DiscussionStatus == "Hired") {
                         if (window.pageData.authData.UserType != "freelancer") {
                             showActionBtns(["finishJobBtn", "createDisputeBtn"])
                         } else {
                             showActionBtns(["createDisputeBtn"])
                         }
+                        discussionInput.style.display = "flex"
                         document.getElementById("discussionBoardSubtitle").innerText = "Held in escrow: BHD" + discussion.EscrowAmount
-                    } else if (discussion.DiscussionStatus == "Archived") {
-                        showActionBtns(["createReviewBtn"])
-                    }else{
+                    }else if (discussion.DiscussionStatus == "Dispute") {
                         showActionBtns()
+                        discussionInput.style.display = "none"
+                        document.getElementById("discussionBoardSubtitle").innerText = "Held in escrow: BHD" + discussion.EscrowAmount
+                        createMessageElement("Dispute",discussion.DisputeDescription || "A dispute has been started, wait for an admin to resolve the situation.")
+                        if(window.pageData.authData.UserType == "admin"){
+                            showActionBtns(["resolveDisputeBtn"])
+                        }
+                    } else if (discussion.DiscussionStatus == "Archived") {
+                        document.getElementById("discussionBoardSubtitle").innerText = ""
+                        if(!discussion.ReviewID){
+                            showActionBtns(["createReviewBtn"])
+                        }else{
+                            showActionBtns()
+                        }
+
+                        discussionInput.style.display = "none"
+                    }else{
+                        document.getElementById("discussionBoardSubtitle").innerText = ""
+                        showActionBtns()
+                        discussionInput.style.display = "none"
                     }
                 }
             })
@@ -146,6 +176,12 @@ function createDiscussionElement(discussion) {
         discussionDiv.classList.add("themedBtn")
         selectedDiscussion = discussion
         socket.emit("joinRoom", discussion.DiscussionID)
+
+        const rightBottomHalf = document.getElementById("rightBottomHalf")
+        const computedStyles = window.getComputedStyle(rightBottomHalf);
+        const isClosed = computedStyles.right != `0px`;
+        screen.width <= 900 && isClosed ? document.getElementById("rightBottomHalfDrawer").click() : undefined;
+        location.hash = "job="+discussion.JobID
     }
 
     // Create and append the span elements
@@ -175,17 +211,21 @@ function createDiscussionElement(discussion) {
     const discussionsContainer = document.getElementById('discussions');
     discussionsContainer.appendChild(discussionDiv);
 
+    if(selectedDiscussion.JobID == discussion.JobID){
+        discussionDiv.click()
+    }
+
 }
 
 
-function createMessageElement(messageBy, messageContent, media = false) {
+function createMessageElement(messageBy, messageContent, UserID, media = false) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
 
     // Create and append the span elements
     const messageBySpan = document.createElement('span');
     messageBySpan.classList.add('messageBy');
-    messageBySpan.textContent = messageBy + ": ";
+    messageBySpan.innerHTML = `<a href="/profile/${UserID}">${messageBy}</a>: `;
     messageDiv.appendChild(messageBySpan);
 
     const messageContentSpan = document.createElement('span');
@@ -199,6 +239,9 @@ function createMessageElement(messageBy, messageContent, media = false) {
     messageDiv.appendChild(messageContentSpan);
 
     dicussionMessages.appendChild(messageDiv);
+    setTimeout(() => {
+        dicussionMessages.scrollTop = 100000000
+    }, 10);
 }
 
 function generateQuote(quote, discussion) {
@@ -211,7 +254,7 @@ function generateQuote(quote, discussion) {
 
     const quoteContent = document.createElement('span');
     quoteContent.id = 'quoteContent';
-    quoteContent.textContent = `${quote.FullName} sent you a quote: ${quote.QuoteAmount}BHD, ${quote.QuoteMessage}`;
+    quoteContent.textContent = `<a href="/profile/${quote.UserID}">${quote.FullName} sent you a quote: ${quote.QuoteAmount}BHD, ${quote.QuoteMessage}`;
 
     const quoteBtnsDiv = document.createElement('div');
     quoteBtnsDiv.id = 'quoteBtns';
@@ -345,16 +388,16 @@ function sendMediaToServer(file) {
 
 const firstDiscussion = document.querySelector(".discussion")
 socket.on('connect', () => {
-    if (firstDiscussion) {
+    if (firstDiscussion && !selectedDiscussion.JobID) {
         firstDiscussion.click()
     }
 });
 socket.on('message', (message) => {
     messageInput.placeholder = "message"
-    createMessageElement(message.by, message.content)
+    createMessageElement(message.by, message.content, message.UserID)
 });
 
 socket.on('media', (message) => {
     messageInput.placeholder = "message"
-    createMessageElement(message.by, message.media, true)
+    createMessageElement(message.by, message.media, message.UserID, true)
 });
