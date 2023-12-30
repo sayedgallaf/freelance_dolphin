@@ -254,7 +254,7 @@ function generateQuote(quote, discussion) {
 
     const quoteContent = document.createElement('span');
     quoteContent.id = 'quoteContent';
-    quoteContent.innerHTML = `<a href="/profile/${quote.UserID}">${quote.FullName} sent you a quote: ${quote.QuoteAmount}BHD, ${quote.QuoteMessage}`;
+    quoteContent.innerHTML = `<a href="/profile/${quote.UserID}">${quote.FullName}</a> sent you a quote: ${quote.QuoteAmount}BHD, ${quote.QuoteMessage}`;
 
     const quoteBtnsDiv = document.createElement('div');
     quoteBtnsDiv.id = 'quoteBtns';
