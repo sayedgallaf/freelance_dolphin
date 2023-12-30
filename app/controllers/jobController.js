@@ -129,7 +129,7 @@ const JobController = {
             if (!job) {
                 return res.status(404).json({ message: 'Job not found' });
             }
-            if(job.Status != "Active" || job.Status != "Archived"){
+            if(job.Status != "Active" && job.Status != "Archived"){
                 return res.status(400).json({ message: 'Job must either be active or archived to get deleted' });
             }
             
