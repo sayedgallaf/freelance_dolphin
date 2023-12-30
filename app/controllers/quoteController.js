@@ -34,6 +34,14 @@ const QuoteController = {
             if(userQuoted){
                 return res.status(404).json({ message: 'You have already made a quote for this job' });
             }
+            const employer = await User.getUserById(job.UserID);
+
+            resend.emails.send({
+                from: 'support@dolphin.directory',
+                to: employer.Email,
+                subject: `Freelance Dolphin: ${user.FullName} has sent you a quote`,
+                text: `Quote Amount: ${QuoteAmount}\n Message: ${QuoteMessage}`
+            })
 
             const newQuote = {
                 QuoteID,
